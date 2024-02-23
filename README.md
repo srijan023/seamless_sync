@@ -1,3 +1,11 @@
+## Compiling with gtk4 
+At first, create a `build` dir in project folder and navigate to the newly created `build` dir.
+
+* Run `cmake -S ..` 
+* Run `make`
+
+This will create an executable in build dir..
+
 # Information about the windows socket
 > ⚠️ This push only contains the file supported for windows however this same could should work on unix based distros as well with the change in the header file
 ## addrinfo
