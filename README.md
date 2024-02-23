@@ -36,7 +36,7 @@ It is used to allocate every single available space in memory with a single valu
 memset(address_start, value, size);
 ```
 
-## Some Additional Funcitons
+## Some Additional Functions
 **htonl** : host to network long data type conversion  
 **htons** : host to network short data type conversion
 

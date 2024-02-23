@@ -1,3 +1,10 @@
+# Build dir
+/build 
+
+# Execuatables
 *.exe
+*.out
+*.app
+
 ipAddress.*
 trial.c
