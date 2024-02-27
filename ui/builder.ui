@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.16.0 -->
+<interface>
+  <!-- interface-name gtkbuilder.ui -->
+  <requires lib="gtk" version="4.12"/>
+  <object class="GtkWindow" id="window">
+    <property name="default-height">400</property>
+    <property name="default-width">500</property>
+    <property name="destroy-with-parent">True</property>
+    <property name="icon-name">network-workgroup</property>
+    <property name="title">Seamless Sync</property>
+    <child>
+      <object class="GtkListBox" id="list">
+        <property name="halign">start</property>
+        <property name="valign">baseline-fill</property>
+        <child>
+          <object class="GtkButton" id="button1">
+            <property name="css-classes">button1</property>
+            <property name="icon-name">avatar-default</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="button2">
+            <property name="css-classes">button2</property>
+            <property name="icon-name">network-cellular-5g-symbolic</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="button3">
+            <property name="css-classes">button3</property>
+            <property name="icon-name">auth-fingerprint-symbolic</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

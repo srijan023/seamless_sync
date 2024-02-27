@@ -1,6 +1,9 @@
 # Build dir
 /build 
 
+# Clangd cache dir
+/.cache
+
 # Execuatables
 *.exe
 *.out
