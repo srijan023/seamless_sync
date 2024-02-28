@@ -1,5 +1,5 @@
 #include "headerConfig.c"
-#include "customDataTypes.h"
+#include "../include/customDataTypes.h"
 
 typedef struct customAddInfo sendingInfo;
 void handleErrorSend(char* msg, sendingInfo* info) {
