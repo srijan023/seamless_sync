@@ -7,8 +7,7 @@ void handleErrorSend(char* msg, sendingInfo* info) {
     strcpy(info->message, msg);
     return;
 }
-sendingInfo sendUDP(char* msg, int msgLength, char* port, char* ip) {
-
+sendingInfo sendUDP(char* msg, int msgLength, char* port, char* ip, int multipleSends) {
     sendingInfo returnMessage;
 #ifdef _WIN32
     WSADATA wsaData;
@@ -37,17 +36,28 @@ sendingInfo sendUDP(char* msg, int msgLength, char* port, char* ip) {
     dest_addr.sin_port = htons(atoi(port));
     dest_addr.sin_addr.s_addr = inet_addr(ip);
 
-    int status = sendto(sockfd, msg, msgLength, 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr));
-    if (status == -1) {
-        handleErrorSend("Failure to send message", &returnMessage);
-        closesocket(sockfd);
+    int status;
+    // allowing for multiple sends over the same port and socket
+    do {
+        status = sendto(sockfd, msg, msgLength, 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr));
+        if (status == -1) {
+            handleErrorSend("Failure to send message", &returnMessage);
 #ifdef _WIN32
-        WSACleanup();
+            WSACleanup();
+            closesocket(sockfd);
+#elif __linux__
+            close(sockfd);
 #endif
-        return returnMessage;
-    }
+            return returnMessage;
+        }
+    } while (multipleSends);
 
+#ifdef _WIN32
     closesocket(sockfd);
+#elif __linux__
+    clsoe(sockfd);
+#endif
+    // only incase of single send
     returnMessage.status = 0;
     char* returnStatus;
     strcpy(returnMessage.message, "Message sent successfully");
