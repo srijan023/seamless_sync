@@ -1,14 +1,21 @@
+#include "src/getMyIp.c"
 #include <gtk/gtk.h>
 
+static void showIpClicked(GtkButton *button, gpointer user_data) {
+  GtkWidget *label;
+  customAdd ip_info = findMyIP();
+  label = gtk_label_new(ip_info.message);
+  gtk_grid_attach(GTK_GRID(user_data), GTK_WIDGET(label), 1, 0, 1, 1);
+}
+
 static void activate(GtkApplication *app, gpointer user_data) {
-  GtkBuilder *builder;
+  GtkWidget *window;
+  GtkWidget *grid;
+  GtkWidget *button;
   GtkCssProvider *provider;
 
-  builder = gtk_builder_new();
-  gtk_builder_add_from_file(builder, "../ui/builder.ui", NULL);
-
-  GObject *window = gtk_builder_get_object(builder, "window");
-  gtk_window_set_application(GTK_WINDOW(window), app);
+  window = gtk_application_window_new(app);
+  gtk_window_set_title(GTK_WINDOW(window), "Seamless Sync");
 
   provider = gtk_css_provider_new();
   gtk_css_provider_load_from_file(provider,
@@ -17,8 +24,14 @@ static void activate(GtkApplication *app, gpointer user_data) {
       gtk_widget_get_display(GTK_WIDGET(window)), GTK_STYLE_PROVIDER(provider),
       GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-  gtk_widget_set_visible(GTK_WIDGET(window), TRUE);
-  g_object_unref(builder);
+  grid = gtk_grid_new();
+  gtk_window_set_child(GTK_WINDOW(window), GTK_WIDGET(grid));
+
+  button = gtk_button_new_with_label("Show IP");
+  g_signal_connect(button, "clicked", G_CALLBACK(showIpClicked), grid);
+  gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(button), 0, 0, 1, 1);
+
+  gtk_window_present(GTK_WINDOW(window));
 }
 
 int main(int argc, char **argv) {
