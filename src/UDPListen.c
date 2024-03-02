@@ -1,22 +1,16 @@
 #include "headerConfig.c"
 #include "../include/customDataTypes.h"
+#include "../include/UDPErrorHandle.h"
 
-typedef struct customAddInfo customMsg;
-void handleErrorListen(char* errMsg, customMsg* msg) {
-    msg->status = -1;
-    strcpy(msg->message, errMsg);
-    return;
-}
-
-customMsg listenUDP(char* port, char* addr) {
-    customMsg returnMessage;
+struct customAddInfo listenUDP(char* port, char* addr) {
+    struct customAddInfo returnMessage;
 
 #ifdef _WIN32
     WSADATA wsaData;
     // Initialize Winsock2.2
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
-        handleErrorListen("WSAStartup failed", &returnMessage);
+        handleUDPError("WSAStartup failed", &returnMessage);
         return returnMessage;
     }
 #endif
@@ -29,7 +23,7 @@ customMsg listenUDP(char* port, char* addr) {
 
     int status = getaddrinfo(addr, port, &hints, &res);
     if (status != 0) {
-        handleErrorListen("Can't get the address info", &returnMessage);
+        handleUDPError("Can't get the address info", &returnMessage);
 #ifdef _WIN32
         WSACleanup();
 #endif
@@ -40,7 +34,7 @@ customMsg listenUDP(char* port, char* addr) {
     int sockfd;
     sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     if (sockfd == -1) {
-        handleErrorListen("Can't create a socket!", &returnMessage);
+        handleUDPError("Can't create a socket!", &returnMessage);
 #ifdef _WIN32
         WSACleanup();
 #endif
@@ -49,9 +43,12 @@ customMsg listenUDP(char* port, char* addr) {
 
     status = bind(sockfd, res->ai_addr, res->ai_addrlen);
     if (status == -1) {
-        handleErrorListen("Can't bind socket to the port!", &returnMessage);
+        handleUDPError("Can't bind socket to the port!", &returnMessage);
 #ifdef _WIN32
         WSACleanup();
+        closesocket(sockfd);
+#elif __linux__
+        close(sockfd);
 #endif
         return returnMessage;
     }
@@ -66,9 +63,12 @@ customMsg listenUDP(char* port, char* addr) {
     // status here gets the value -1 if receiving was failed, else its gets the size of bytes received
     status = recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)&their_addr, &addr_size);
     if (status == -1) {
-        handleErrorListen("Message receiving failed!", &returnMessage);
+        handleUDPError("Message receiving failed!", &returnMessage);
 #ifdef _WIN32
         WSACleanup();
+        closesocket(sockfd);
+#elif __linux__
+        close(sockfd);
 #endif
         return returnMessage;
     }
@@ -78,6 +78,9 @@ customMsg listenUDP(char* port, char* addr) {
     strcpy(returnMessage.message, buffer);
 #ifdef _WIN32
     WSACleanup();
+    closesocket(sockfd);
+#elif __linux__
+    close(sockfd);
 #endif
     return returnMessage;
 }

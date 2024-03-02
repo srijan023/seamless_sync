@@ -1,20 +1,15 @@
 #include "headerConfig.c"
 #include "../include/customDataTypes.h"
+#include "../include/UDPErrorHandle.h"
 
-typedef struct customAddInfo sendingInfo;
-void handleErrorSend(char* msg, sendingInfo* info) {
-    info->status = -1;
-    strcpy(info->message, msg);
-    return;
-}
-sendingInfo sendUDP(char* msg, int msgLength, char* port, char* ip, int multipleSends) {
-    sendingInfo returnMessage;
+struct customAddInfo sendUDP(char* msg, int msgLength, char* port, char* ip, int multipleSends) {
+    struct customAddInfo returnMessage;
 #ifdef _WIN32
     WSADATA wsaData;
     // Initialize Winsock2.2
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
-        handleErrorSend("WSAStartup failed", &returnMessage);
+        handleUDPError("WSAStartup failed", &returnMessage);
         return returnMessage;
     }
 #endif
@@ -22,7 +17,7 @@ sendingInfo sendUDP(char* msg, int msgLength, char* port, char* ip, int multiple
     int sockfd;
     sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sockfd == -1) {
-        handleErrorSend("Can't create a socket", &returnMessage);
+        handleUDPError("Can't create a socket", &returnMessage);
 #ifdef _WIN32
         WSACleanup();
 #endif
@@ -41,7 +36,7 @@ sendingInfo sendUDP(char* msg, int msgLength, char* port, char* ip, int multiple
     do {
         status = sendto(sockfd, msg, msgLength, 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr));
         if (status == -1) {
-            handleErrorSend("Failure to send message", &returnMessage);
+            handleUDPError("Failure to send message", &returnMessage);
 #ifdef _WIN32
             WSACleanup();
             closesocket(sockfd);
@@ -54,15 +49,12 @@ sendingInfo sendUDP(char* msg, int msgLength, char* port, char* ip, int multiple
 
 #ifdef _WIN32
     closesocket(sockfd);
+    WSACleanup();
 #elif __linux__
-    clsoe(sockfd);
+    close(sockfd);
 #endif
     // only incase of single send
     returnMessage.status = 0;
-    char* returnStatus;
     strcpy(returnMessage.message, "Message sent successfully");
-#ifdef _WIN32
-    WSACleanup();
-#endif
     return returnMessage;
 }

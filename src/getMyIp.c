@@ -1,21 +1,16 @@
 #include "headerConfig.c"
 #include "../include/customDataTypes.h"
+#include "../include/UDPErrorHandle.h"
 
-typedef struct customAddInfo customAdd;
-void handleError(char* mess, customAdd* info) {
-    info->status = -1;
-    strcpy(info->message, mess);
-}
-
-customAdd findMyIP() {
-    customAdd ipInfo;
+struct customAddInfo findMyIP() {
+    struct customAddInfo ipInfo;
 
 #ifdef _WIN32
     WSADATA wsaData;
     // Initialize Winsock2.2
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
-        handleError("WSAStartup failed", &ipInfo);
+        handleUDPError("WSAStartup failed", &ipInfo);
         return ipInfo;
     }
 #endif
@@ -28,7 +23,7 @@ customAdd findMyIP() {
 
     // error handling
     if (sock < 0) {
-        handleError("Could not create a UDP socket", &ipInfo);
+        handleUDPError("Could not create a UDP socket", &ipInfo);
 #ifdef _WIN32
         WSACleanup();
 #endif
@@ -42,9 +37,12 @@ customAdd findMyIP() {
 
     int err = connect(sock, (const struct sockaddr*)&serv, sizeof(serv));
     if (err == -1) {
-        handleError("Could not connect the socket", &ipInfo);
+        handleUDPError("Could not connect the socket", &ipInfo);
 #ifdef _WIN32
         WSACleanup();
+        closesocket(sock);
+#elif __linux__
+        close(sock);
 #endif
         return ipInfo;
     }
@@ -52,9 +50,12 @@ customAdd findMyIP() {
     socklen_t clntnamelen = sizeof(clnt);
     err = getsockname(sock, (struct sockaddr*)&clnt, &clntnamelen);
     if (err == -1) {
-        handleError("Could not get the socket name", &ipInfo);
+        handleUDPError("Could not get the socket name", &ipInfo);
 #ifdef _WIN32
         WSACleanup();
+        closesocket(sock);
+#elif __linux__
+        close(sock);
 #endif
         return ipInfo;
     }
@@ -67,16 +68,20 @@ customAdd findMyIP() {
         strcpy(ipInfo.message, ipAddress);
 #ifdef _WIN32
         WSACleanup();
-#endif
         closesocket(sock);
+#elif __linux__
+        close(sock);
+#endif
         return ipInfo;
     }
     else {
-        handleError("Couldn't get the IP address", &ipInfo);
+        handleUDPError("Couldn't get the IP address", &ipInfo);
 #ifdef _WIN32
         WSACleanup();
-#endif
         closesocket(sock);
+#elif __linux__
+        close(sock);
+#endif
         return ipInfo;
     }
 }
