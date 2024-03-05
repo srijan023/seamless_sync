@@ -4,7 +4,6 @@
 #include <string.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-// TODO: Include window.h header file
 
 #pragma comment(lib, "ws2_32.lib")
 #elif __linux__

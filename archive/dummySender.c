@@ -1,5 +1,5 @@
 #include "../src/headerConfig.c"
-#include "../src/UDPSend.c"
+#include "../include/UDPSend.h"
 
 typedef struct customAddInfo SSDPSendMessage;
 int main() {
@@ -14,35 +14,3 @@ int main() {
 
     return 0;
 }
-
-// Previous code
-    // WSADATA wsaData;
-    // // Initialize Winsock2.2
-    // int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    // if (iResult != 0) {
-    //     perror("WDS Startup");
-    //     return -1;
-    // }
-
-    // int fd = socket(AF_INET, SOCK_DGRAM, 0);
-    // if (fd < 0) {
-    //     perror("Socket can' be created");
-    //     return -1;
-    // }
-
-    // struct sockaddr_in addr;
-    // memset(&addr, 0, sizeof(addr));
-    // addr.sin_family = AF_INET; // IPv4
-    // addr.sin_addr.s_addr = inet_addr(group); // put my ip address automatically
-    // addr.sin_port = htons(port);
-
-    // while (1) {
-    //     char ch = 0;
-    //     int nbytes = sendto(fd, message, strlen(message), 0, (struct sockaddr*)&addr, sizeof(addr));
-    //     if (nbytes < 0) {
-    //         perror("Message could not be sent");
-    //         // return -1;
-    //     }
-    //     Sleep(1000);
-    // }
-    // WSACleanup();
