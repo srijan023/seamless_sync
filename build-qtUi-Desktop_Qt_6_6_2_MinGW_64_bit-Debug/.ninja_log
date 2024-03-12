@@ -1,0 +1,17 @@
+# ninja log v5
+7	53	0	D:/defense/seamless_sync/build-qtUi-Desktop_Qt_6_6_2_MinGW_64_bit-Debug/CMakeFiles/cmake.verify_globs	10179f912945b573
+1	806	7319456418343047	qtUi_autogen/timestamp	328823ee3a7f8130
+1	806	7319456418343047	qtUi_autogen/mocs_compilation.cpp	328823ee3a7f8130
+1	806	7319456418343047	D:/defense/seamless_sync/build-qtUi-Desktop_Qt_6_6_2_MinGW_64_bit-Debug/qtUi_autogen/timestamp	328823ee3a7f8130
+1	806	7319456418343047	D:/defense/seamless_sync/build-qtUi-Desktop_Qt_6_6_2_MinGW_64_bit-Debug/qtUi_autogen/mocs_compilation.cpp	328823ee3a7f8130
+810	4292	7319456453928218	CMakeFiles/qtUi.dir/main.cpp.obj	daad3af66e471663
+807	4327	7319456454085752	CMakeFiles/qtUi.dir/qtUi_autogen/mocs_compilation.cpp.obj	635a4b99ca0437f5
+815	4592	7319456456929736	CMakeFiles/qtUi.dir/mainwindow.cpp.obj	5a46bd674fdcb926
+4593	4970	7319456460701194	qtUi.exe	8e563bb4f89b52f3
+6	39	0	D:/defense/seamless_sync/build-qtUi-Desktop_Qt_6_6_2_MinGW_64_bit-Debug/CMakeFiles/cmake.verify_globs	10179f912945b573
+19	251	7319457078010461	qtUi_autogen/timestamp	328823ee3a7f8130
+19	251	7319457078010461	qtUi_autogen/mocs_compilation.cpp	328823ee3a7f8130
+19	251	7319457078010461	D:/defense/seamless_sync/build-qtUi-Desktop_Qt_6_6_2_MinGW_64_bit-Debug/qtUi_autogen/timestamp	328823ee3a7f8130
+19	251	7319457078010461	D:/defense/seamless_sync/build-qtUi-Desktop_Qt_6_6_2_MinGW_64_bit-Debug/qtUi_autogen/mocs_compilation.cpp	328823ee3a7f8130
+265	3062	7319457106182234	CMakeFiles/qtUi.dir/mainwindow.cpp.obj	5a46bd674fdcb926
+3063	3347	7319457108975324	qtUi.exe	8e563bb4f89b52f3
