@@ -1,3 +1,12 @@
+## Qt
+Open qtUi with qt creator.
+- design UI in `mainwindow.ui`.
+- code UI in `mainwindow.cpp`.
+
+### Current issue to fix
+- box width for the sent message adopts the width of new message if new message is of greater length.
+- Set `chat_field` always at the bottom. Try this if it works for you : `ui->chat_field->verticalScrollBar->setValue(ui->chat_field->maximum())` 
+
 ## Compiling with gtk4
 
 At first, create a `build` dir in project folder and navigate to the newly created `build` dir.
