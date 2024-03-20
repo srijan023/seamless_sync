@@ -3,6 +3,8 @@
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
+#include<QLabel>
+
 
 int main(int argc, char *argv[])
 {
@@ -17,7 +19,10 @@ int main(int argc, char *argv[])
             break;
         }
     }
+
     MainWindow w;
+    w.setWindowTitle("SeamlessSync");
+    w.resize(800,600);
     w.show();
     return a.exec();
 }

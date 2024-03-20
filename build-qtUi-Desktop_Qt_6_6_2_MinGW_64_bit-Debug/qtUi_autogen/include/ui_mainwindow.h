@@ -14,11 +14,13 @@
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QScrollArea>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -32,13 +34,14 @@ public:
     QGridLayout *gridLayout_2;
     QScrollArea *chat_field;
     QWidget *scrollAreaWidgetContents_2;
-    QLabel *label_2;
-    QScrollArea *devices_available;
-    QWidget *scrollAreaWidgetContents;
-    QLabel *label;
+    QGridLayout *gridLayout_3;
+    QSpacerItem *horizontalSpacer;
+    QVBoxLayout *vlayout_message;
+    QSpacerItem *verticalSpacer;
     QHBoxLayout *messageBar;
     QLineEdit *messageField;
-    QPushButton *messangeSend;
+    QPushButton *messageSend;
+    QListView *devices_list;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -51,36 +54,42 @@ public:
         gridLayout->setObjectName("gridLayout");
         mainContainer = new QFrame(centralwidget);
         mainContainer->setObjectName("mainContainer");
+        mainContainer->setMinimumSize(QSize(700, 0));
         mainContainer->setFrameShape(QFrame::StyledPanel);
         mainContainer->setFrameShadow(QFrame::Raised);
         gridLayout_2 = new QGridLayout(mainContainer);
         gridLayout_2->setObjectName("gridLayout_2");
         chat_field = new QScrollArea(mainContainer);
         chat_field->setObjectName("chat_field");
+        QSizePolicy sizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(chat_field->sizePolicy().hasHeightForWidth());
+        chat_field->setSizePolicy(sizePolicy);
+        chat_field->setMinimumSize(QSize(480, 0));
+        chat_field->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         chat_field->setWidgetResizable(true);
         scrollAreaWidgetContents_2 = new QWidget();
         scrollAreaWidgetContents_2->setObjectName("scrollAreaWidgetContents_2");
-        scrollAreaWidgetContents_2->setGeometry(QRect(0, 0, 486, 350));
-        label_2 = new QLabel(scrollAreaWidgetContents_2);
-        label_2->setObjectName("label_2");
-        label_2->setGeometry(QRect(200, 10, 101, 21));
+        scrollAreaWidgetContents_2->setGeometry(QRect(0, 0, 478, 350));
+        gridLayout_3 = new QGridLayout(scrollAreaWidgetContents_2);
+        gridLayout_3->setObjectName("gridLayout_3");
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        gridLayout_3->addItem(horizontalSpacer, 1, 0, 1, 1);
+
+        vlayout_message = new QVBoxLayout();
+        vlayout_message->setObjectName("vlayout_message");
+
+        gridLayout_3->addLayout(vlayout_message, 1, 1, 1, 1);
+
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        gridLayout_3->addItem(verticalSpacer, 0, 1, 1, 1);
+
         chat_field->setWidget(scrollAreaWidgetContents_2);
 
         gridLayout_2->addWidget(chat_field, 0, 1, 1, 1);
-
-        devices_available = new QScrollArea(mainContainer);
-        devices_available->setObjectName("devices_available");
-        devices_available->setMaximumSize(QSize(200, 16777215));
-        devices_available->setWidgetResizable(true);
-        scrollAreaWidgetContents = new QWidget();
-        scrollAreaWidgetContents->setObjectName("scrollAreaWidgetContents");
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 198, 382));
-        label = new QLabel(scrollAreaWidgetContents);
-        label->setObjectName("label");
-        label->setGeometry(QRect(50, 10, 101, 21));
-        devices_available->setWidget(scrollAreaWidgetContents);
-
-        gridLayout_2->addWidget(devices_available, 0, 0, 2, 1);
 
         messageBar = new QHBoxLayout();
         messageBar->setObjectName("messageBar");
@@ -89,13 +98,20 @@ public:
 
         messageBar->addWidget(messageField);
 
-        messangeSend = new QPushButton(mainContainer);
-        messangeSend->setObjectName("messangeSend");
+        messageSend = new QPushButton(mainContainer);
+        messageSend->setObjectName("messageSend");
 
-        messageBar->addWidget(messangeSend);
+        messageBar->addWidget(messageSend);
 
 
         gridLayout_2->addLayout(messageBar, 1, 1, 1, 1);
+
+        devices_list = new QListView(mainContainer);
+        devices_list->setObjectName("devices_list");
+        devices_list->setMinimumSize(QSize(210, 0));
+        devices_list->setMaximumSize(QSize(250, 16777215));
+
+        gridLayout_2->addWidget(devices_list, 0, 0, 2, 1);
 
 
         gridLayout->addWidget(mainContainer, 0, 0, 1, 1);
@@ -110,9 +126,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        label_2->setText(QCoreApplication::translate("MainWindow", "chat_field", nullptr));
-        label->setText(QCoreApplication::translate("MainWindow", "available_devices", nullptr));
-        messangeSend->setText(QCoreApplication::translate("MainWindow", "Send", nullptr));
+        messageSend->setText(QCoreApplication::translate("MainWindow", "Send", nullptr));
     } // retranslateUi
 
 };
