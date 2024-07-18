@@ -16,6 +16,9 @@ At first, create a `build` dir in project folder and navigate to the newly creat
 
 This will create an executable in build dir..
 
+- Execute using `bin/ssync`
+
+
 # Information about the windows socket
 
 > ⚠️ This push only contains the file supported for windows however this same could should work on unix based distros as well with the change in the header file
