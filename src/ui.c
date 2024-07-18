@@ -87,9 +87,7 @@ GtkWidget *create_main_window(GtkApplication *app) {
       "To use Seamless Sync, verify your identity using the "
       "authentication methods you've turned on. Make sure other "
       "device has Seamless Sync turned on.");
-  GtkWidget *image = create_image(
-      "../../../temp/—Pngtree—stereo wifi signal network signal_4481156.png",
-      200, 200);
+  GtkWidget *image = create_image("../include/image.png", 200, 200);
   GtkWidget *button =
       create_button("Verify", G_CALLBACK(on_button_clicked), window);
 
