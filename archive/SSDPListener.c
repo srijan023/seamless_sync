@@ -28,12 +28,13 @@ int main() {
   pthread_t SSDPThread;
   int doLooping = 1;
   pthread_create(&SSDPThread, NULL, SSDPListen, &doLooping);
-  sleep(10000); // suspend
+  sleep(10); // suspend
   doLooping = 0;
-  struct customAddInfo *revMsg;
+  struct ssdpMessage *revMsg;
   pthread_join(SSDPThread, (void **)&revMsg);
-  printf("here\n");
   printf("%s\n", revMsg->message);
+  printf("%d\n", revMsg->size);
+  free(revMsg->arr);
   free(revMsg);
   return 0;
 }

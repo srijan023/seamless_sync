@@ -4,6 +4,15 @@
 #include <pthread.h>
 #include <sys/socket.h>
 
+int isPresent(char **arr, char *key, int size) {
+  for (int i = 0; i < size; i++) {
+    if (strcmp(arr[i], key) == 0) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 char **doubleArraySize(char **arr, int size, int *newSize) {
   *newSize = size * 2;
   char **newArr = realloc(arr, (*newSize) * sizeof(char *));
@@ -121,6 +130,10 @@ void *SSDPListen(void *arg) {
           ipStart += strlen(key);
           char ip[16]; // 255.255.255.255
           sscanf(ipStart, "%15s", ip);
+          printf("%s\n", ip);
+          if (isPresent(IpList, ip, count + 1)) {
+            continue;
+          }
           count++;
           strncpy(IpList[count], ip, 20);
           if (count == size - 1) {
