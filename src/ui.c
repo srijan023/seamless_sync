@@ -4,7 +4,8 @@
 // Function Prototypes
 static void activate(GtkApplication *app, gpointer data);
 GtkWidget *create_main_window(GtkApplication *app);
-GtkWidget *create_vertical_box();
+GtkWidget *create_vertical_box(int spacing, int t_margin, int b_margin,
+                               int s_margin, int e_margin);
 GtkWidget *create_wrapped_label(const char *text);
 GtkWidget *create_image(const char *path, int width, int height);
 GtkWidget *create_button(const char *label, GCallback on_button_clicked,
@@ -21,31 +22,21 @@ GtkWidget *create_window(GtkApplication *app) {
   return window;
 }
 
-/* GtkWidget *create_grid() {
-  GtkWidget *grid = gtk_grid_new();
-  gtk_widget_set_margin_end(GTK_WIDGET(grid), 75);
-  gtk_widget_set_margin_start(GTK_WIDGET(grid), 75);
-  gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
-  gtk_grid_set_row_homogeneous(GTK_GRID(grid), TRUE);
-  return grid;
-} */
-
 static void on_item_selected(GtkListBox *listbox, GtkListBoxRow *row,
                              gpointer user_data) {
+  // Ensure row is a valid widget
   if (!GTK_IS_WIDGET(row))
-    return; // Ensure row is a valid widget
+    return;
   GtkWidget *main_content = GTK_WIDGET(user_data);
   GtkWidget *label = gtk_widget_get_first_child(GTK_WIDGET(row));
 
   if (GTK_IS_WIDGET(label)) {
     const char *item_text = gtk_label_get_text(GTK_LABEL(label));
-
     // Remove the old child widget from the main content
     GtkWidget *old_child = gtk_widget_get_first_child(main_content);
     if (old_child) {
       gtk_box_remove(GTK_BOX(main_content), old_child);
     }
-
     // Create a new label with the item text and add it to the main content
     GtkWidget *new_label = gtk_label_new(item_text);
     gtk_box_append(GTK_BOX(main_content), new_label);
@@ -58,17 +49,14 @@ void create_sidebar(GtkWidget *box, GtkWidget *main_content,
   GtkWidget *sidebar_container = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
   // Create the sticky box with a label and button
-  GtkWidget *sticky_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-  GtkWidget *sticky_label = gtk_label_new(findMyIP().message);
-  GtkWidget *sticky_button = gtk_button_new_with_label("Sticky Button");
-  gtk_box_append(GTK_BOX(sticky_box), sticky_label);
+  GtkWidget *sticky_box = create_vertical_box(0, 10, 10, 10, 10);
+  GtkWidget *sticky_button = gtk_button_new_with_label("Refresh");
   gtk_box_append(GTK_BOX(sticky_box), sticky_button);
-  gtk_widget_set_margin_bottom(sticky_box, 10);
-  gtk_widget_set_margin_top(sticky_box, 10);
-  gtk_widget_set_margin_end(sticky_box, 10);
-  gtk_widget_set_margin_start(sticky_box, 10);
 
-  gtk_box_append(GTK_BOX(sidebar_container), sticky_box);
+  GtkWidget *frame = gtk_frame_new(findMyIP().message);
+  gtk_frame_set_label_align(GTK_FRAME(frame), 0.5);
+  gtk_frame_set_child(GTK_FRAME(frame), sticky_box);
+  gtk_box_append(GTK_BOX(sidebar_container), frame);
 
   GtkWidget *sidebar = gtk_list_box_new();
   for (int i = 0; i < n_items; i++) {
@@ -100,7 +88,7 @@ static void on_button_clicked(GtkWidget *widget, gpointer data) {
   GtkWindow *window = GTK_WINDOW(data);
 
   // Create the new main content area
-  GtkWidget *main_content = create_vertical_box();
+  GtkWidget *main_content = create_vertical_box(10, 20, 20, 20, 20);
   const char *items[] = {
       "apple",      "ball",      "cat",    "Dog",      "Egg",       "Fish",
       "Gold",       "fig",       "grape",  "honeydew", "kiwi",      "lemon",
@@ -145,12 +133,13 @@ GtkWidget *create_wrapped_label(const char *text) {
   return label;
 }
 
-GtkWidget *create_vertical_box() {
-  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-  gtk_widget_set_margin_top(box, 20);
-  gtk_widget_set_margin_bottom(box, 20);
-  gtk_widget_set_margin_start(box, 20);
-  gtk_widget_set_margin_end(box, 20);
+GtkWidget *create_vertical_box(int spacing, int t_margin, int b_margin,
+                               int s_margin, int e_margin) {
+  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, spacing);
+  gtk_widget_set_margin_top(box, t_margin);
+  gtk_widget_set_margin_bottom(box, b_margin);
+  gtk_widget_set_margin_start(box, s_margin);
+  gtk_widget_set_margin_end(box, e_margin);
   gtk_widget_set_valign(box, GTK_ALIGN_CENTER);
   gtk_widget_set_halign(box, GTK_ALIGN_CENTER);
   return box;
@@ -192,7 +181,7 @@ GtkWidget *create_main_window(GtkApplication *app) {
   gtk_widget_set_tooltip_text(menu_button, "Menu");
   gtk_header_bar_pack_end(GTK_HEADER_BAR(header), menu_button);
 
-  GtkWidget *box = create_vertical_box();
+  GtkWidget *box = create_vertical_box(10, 20, 20, 20, 20);
   GtkWidget *label = create_wrapped_label(
       "To use Seamless Sync, verify your identity using the "
       "authentication methods you've turned on. Make sure other "
