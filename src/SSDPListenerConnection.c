@@ -1,6 +1,8 @@
 #include "../include/SSDPErrorHandle.h"
 #include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
+// #include <ctime>
+// #include <cstdlib>
 #include <pthread.h>
 #include <sys/socket.h>
 
@@ -23,7 +25,8 @@ char **doubleArraySize(char **arr, int size, int *newSize) {
   return newArr;
 }
 
-void *SSDPListen(void *arg) {
+void *SSDPListen() {
+  printf("I am inside ssdp listen\n");
   struct ssdpMessage *msg =
       (struct ssdpMessage *)malloc(sizeof(struct ssdpMessage));
 #ifdef _WIN32
@@ -83,7 +86,7 @@ void *SSDPListen(void *arg) {
   int addrlen = sizeof(theirAddrs);
   int count = -1;
   const char *key = "uuid:";
-  int *condition = (int *)arg;
+  // int *condition = (int *)arg;
 
   // initializing a multi dimensional dynamic array
   int size = 10;
@@ -116,52 +119,87 @@ void *SSDPListen(void *arg) {
   }
 
   // while true send SSDP messages
-  while (*condition) {
-    int nbytes =
-        recvfrom(SSDPListener, msgBuffer, 256, 0,
-                 (struct sockaddr *)&theirAddrs, (socklen_t *)&addrlen);
-    if (nbytes > 0) {
-      msgBuffer[nbytes] = '\0';
-      // checking if seamless is in the SSDP request header
-      const char *seam = strstr(msgBuffer, "seamless");
-      if (seam) {
-        const char *ipStart = strstr(msgBuffer, key);
-        if (ipStart) {
-          ipStart += strlen(key);
-          char ip[16]; // 255.255.255.255
-          sscanf(ipStart, "%15s", ip);
-          printf("%s\n", ip);
-          if (isPresent(IpList, ip, count + 1)) {
-            continue;
-          }
-          count++;
-          strncpy(IpList[count], ip, 20);
-          if (count == size - 1) {
-            IpList = doubleArraySize(IpList, size, &size);
-            for (int i = count; i < size; i++) {
-              IpList[i] = (char *)malloc(size * 20);
-              if (IpList[i] == NULL) {
-                handleSSDPError("Can't create a dynamic array", msg);
+  // time_t start_time = time(NULL);
+  printf("I am entering the while loop\n");
+  clock_t start_time = clock();
+  double duration = 5.0;
+  while (1) {
+    clock_t current_time = clock();
+    double elapsed_time = (double)(current_time - start_time) / CLOCKS_PER_SEC;
+    if (elapsed_time >= duration) {
+      break;
+    }
+    printf("n iteration of loop completed\n");
+
+    printf("I am inside while loop\n");
+    fd_set read_fds;
+    struct timeval timeout;
+
+    FD_ZERO(&read_fds);
+    FD_SET(SSDPListener, &read_fds);
+
+    timeout.tv_sec = 5;
+    timeout.tv_usec = 0;
+
+    int activity = select(SSDPListener + 1, &read_fds, NULL, NULL, &timeout);
+
+    if (activity < 0) {
+      perror("select error");
+      close(SSDPListener);
+      exit(EXIT_FAILURE);
+    } else if (activity == 0) {
+      printf("Timeout: no data received within 5 seconds.\n");
+      break;
+    }
+
+    if (FD_ISSET(SSDPListener, &read_fds)) {
+      int nbytes =
+          recvfrom(SSDPListener, msgBuffer, 256, 0,
+                   (struct sockaddr *)&theirAddrs, (socklen_t *)&addrlen);
+      printf("recvFrom completed\n");
+      if (nbytes > 0) {
+        msgBuffer[nbytes] = '\0';
+        // checking if seamless is in the SSDP request header
+        const char *seam = strstr(msgBuffer, "seamless");
+        if (seam) {
+          const char *ipStart = strstr(msgBuffer, key);
+          if (ipStart) {
+            ipStart += strlen(key);
+            char ip[16]; // 255.255.255.255
+            sscanf(ipStart, "%15s", ip);
+            printf("%s\n", ip);
+            if (isPresent(IpList, ip, count + 1)) {
+              continue;
+            }
+            count++;
+            strncpy(IpList[count], ip, 20);
+            if (count == size - 1) {
+              IpList = doubleArraySize(IpList, size, &size);
+              for (int i = count; i < size; i++) {
+                IpList[i] = (char *)malloc(size * 20);
+                if (IpList[i] == NULL) {
+                  handleSSDPError("Can't create a dynamic array", msg);
 #ifdef _WIN32
-                closesocket(SSDPListener);
-                WSACleanup();
+                  closesocket(SSDPListener);
+                  WSACleanup();
 #elif __linux__
-                close(SSDPListener);
+                  close(SSDPListener);
 #endif
-                return (void *)msg;
+                  return (void *)msg;
+                }
               }
             }
-          }
-        } else {
-          // uuid not found
-          handleSSDPError("uuid not found on header", msg);
+          } else {
+            // uuid not found
+            handleSSDPError("uuid not found on header", msg);
 #ifdef _WIN32
-          closesocket(SSDPListener);
-          WSACleanup();
+            closesocket(SSDPListener);
+            WSACleanup();
 #elif __linux__
-          close(SSDPListener);
+            close(SSDPListener);
 #endif
-          return (void *)msg;
+            return (void *)msg;
+          }
         }
       }
     }
