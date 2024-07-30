@@ -1,4 +1,4 @@
-#include "ui.c"
+#include "ui/activate.c"
 
 int main(int argc, char **argv) {
   GtkApplication *app;
