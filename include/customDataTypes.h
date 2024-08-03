@@ -10,4 +10,9 @@ struct ssdpMessage {
   int size;
   char message[1024];
 };
+
+struct fileInfo {
+  char name[1024];
+  char type;
+};
 #endif

@@ -1,3 +1,4 @@
+#include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -6,6 +7,21 @@
 #define PORT 2326
 #define BACKLOG 5
 #define BUFSIZE 1025 * 8
+
+void receive_file(int server_sock, char *filePath, char *name) {
+  FILE *fp = fopen("./tempFile.c", "wb");
+  if (fp == NULL) {
+    printf("[-] File open error");
+    return;
+  }
+  printf("This is second\n");
+  char buffer[BUFSIZE];
+  int n;
+  while ((n = recv(server_sock, buffer, BUFSIZE, 0)) > 0) {
+    fwrite(buffer, 1, n, fp);
+  }
+  fclose(fp);
+}
 
 int main() {
   int server_sock;
@@ -39,15 +55,22 @@ int main() {
   char name[BUFSIZE];
 
   // these two can be combined to one
-  recv(server_sock, &type, 1, 0);
-  recv(server_sock, name, BUFSIZE, 0);
+  /*recv(server_sock, &type, 1, 0);*/
+  /*recv(server_sock, name, BUFSIZE, 0);*/
+  struct fileInfo fi;
+  recv(server_sock, &fi, sizeof(fi), 0);
+  printf("The file type is %c\n", fi.type);
+  printf("The name of the file is %s\n", fi.name);
 
   if (type == 'D') {
     // it is a directory
     // recvDir()
+    printf("Currently can't receive a directory");
   } else {
     // it is a file
     // recvFile()
+    receive_file(server_sock, "./", name);
+    /*printf("Receiving a file");*/
   }
 
   close(server_sock);

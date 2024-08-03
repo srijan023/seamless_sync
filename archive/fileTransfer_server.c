@@ -1,4 +1,7 @@
+#include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
+#include <asm-generic/socket.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 
@@ -6,6 +9,24 @@
 #define BACKLOG 5
 #define BUFSIZE                                                                \
   1024 * 8 // setting up the buffer size to be 8kb for efficient transfer
+
+void send_file(int client_sock, char *file_path) {
+  FILE *fp = fopen(file_path, "rb");
+  if (fp == NULL) {
+    printf("[-] Can't open the file ");
+    close(client_sock);
+    return;
+  }
+  char buffer[BUFSIZE];
+
+  int n;
+  while ((n = fread(buffer, 1, BUFSIZE, fp)) > 0) {
+    send(client_sock, buffer, n, 0);
+    printf("%d bytes sent", n);
+  }
+
+  fclose(fp);
+}
 
 int main() {
   int err;
@@ -16,6 +37,14 @@ int main() {
   server_sock = socket(AF_INET, SOCK_STREAM, 0);
   if (server_sock == -1) {
     printf("[-] Socket creation failed");
+    return -1;
+  }
+
+  // making the socket reuseable
+  if (setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR, &(int){1},
+                 sizeof(int)) < 0) {
+    printf("[-] Error while setting socket reuseable");
+    close(server_sock);
     return -1;
   }
 
@@ -32,6 +61,7 @@ int main() {
              sizeof(struct sockaddr));
   if (err == -1) {
     printf("[-] Error in binding");
+    close(server_sock);
     return -1;
   }
 
@@ -63,15 +93,37 @@ int main() {
   struct stat st;
   if (stat(file_path, &st) == -1) {
     printf("[-] Stat error\n");
+    close(server_sock);
+    close(client_sock);
     return -1;
   }
 
   if (S_ISDIR(st.st_mode)) {
     // it is a directory
     // sendDir()
+    printf("Can't send directories just yet");
   } else {
     // it is a file
     // sendFile()
+
+    /*send(client_sock, "F", 1, 0);*/
+
+    const char *file_name = strrchr(file_path, '/');
+    if (file_name) {
+      file_name++;
+    } else {
+      file_name = file_path;
+    }
+
+    struct fileInfo fi;
+
+    strcpy(fi.name, file_name);
+    fi.type = 'F';
+
+    /*send(client_sock, file_name, strlen(file_name) + 1, 0);*/
+    send(client_sock, &fi, sizeof(fi), 0);
+
+    send_file(client_sock, file_path);
   }
 
   close(client_sock);
