@@ -1,6 +1,7 @@
 #include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
 #include <asm-generic/socket.h>
+#include <dirent.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
@@ -26,6 +27,50 @@ void send_file(int client_sock, char *file_path) {
   }
 
   fclose(fp);
+  send(client_sock, "E", 1, 0);
+}
+
+void send_directory(int client_sock, char *dir_path) {
+  DIR *d = opendir(dir_path);
+  if (d == NULL) {
+    printf("[-] opendir error");
+    return;
+  }
+
+  struct dirent *dir;
+  while ((dir = readdir(d)) != NULL) {
+    // if its . or .. skip it
+    if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0) {
+      continue;
+    }
+
+    char path[BUFSIZE];
+    // setting up the path to get information on what it is
+    snprintf(path, BUFSIZE, "%s/%s", dir_path, dir->d_name);
+    printf("%s\n", path);
+
+    struct stat st;
+    if (stat(path, &st) == -1) {
+      printf("Error in st");
+      continue;
+    }
+
+    if (S_ISDIR(st.st_mode)) {
+      struct fileInfo fi;
+      strcpy(fi.name, dir->d_name);
+      fi.type = 'D';
+      send(client_sock, &fi, sizeof(fi), 0);
+      send_directory(client_sock, path);
+    } else {
+      struct fileInfo fi;
+      strcpy(fi.name, dir->d_name);
+      fi.type = 'F';
+      send(client_sock, &fi, sizeof(fi), 0);
+      send_file(client_sock, path);
+    }
+  }
+  closedir(d);
+  send(client_sock, "E", 1, 0);
 }
 
 int main() {
@@ -98,29 +143,28 @@ int main() {
     return -1;
   }
 
+  const char *file_name = strrchr(file_path, '/');
+  if (file_name) {
+    file_name++;
+  } else {
+    file_name = file_path;
+  }
+
+  struct fileInfo fi;
+
+  strcpy(fi.name, file_name);
+
   if (S_ISDIR(st.st_mode)) {
     // it is a directory
-    // sendDir()
-    printf("Can't send directories just yet");
+    fi.type = 'D';
+
+    send(client_sock, &fi, sizeof(fi), 0);
+    /*printf("Can't send directories just yet");*/
+    send_directory(client_sock, file_path);
   } else {
     // it is a file
-    // sendFile()
-
-    /*send(client_sock, "F", 1, 0);*/
-
-    const char *file_name = strrchr(file_path, '/');
-    if (file_name) {
-      file_name++;
-    } else {
-      file_name = file_path;
-    }
-
-    struct fileInfo fi;
-
-    strcpy(fi.name, file_name);
     fi.type = 'F';
 
-    /*send(client_sock, file_name, strlen(file_name) + 1, 0);*/
     send(client_sock, &fi, sizeof(fi), 0);
 
     send_file(client_sock, file_path);
