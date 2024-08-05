@@ -12,6 +12,11 @@ typedef struct {
   struct ssdpMessage result;
 } UiUpdateData;
 
+typedef struct {
+  GtkWidget *window;
+  guint timeout_id;
+} StartData;
+
 static void update_ui(gpointer user_data) {
   UiUpdateData *data = (UiUpdateData *)user_data;
   g_print("%s", data->result.message);
@@ -53,8 +58,15 @@ static void on_ssdp_scan_completed(GObject *source_object, GAsyncResult *res,
 }
 
 void on_start_clicked(GtkWidget *widget, gpointer data) {
-  g_print("%s\n", "start clicked");
-  GtkWindow *window = GTK_WINDOW(data);
+  StartData *user_data = (StartData *)data;
+
+  if (user_data->timeout_id > 0) {
+    g_source_remove(user_data->timeout_id);
+    user_data->timeout_id = 0;
+    g_print("Periodic(5s) network status check stopped\n");
+  }
+
+  GtkWindow *window = GTK_WINDOW(user_data->window);
 
   // Create the new main content area
   GtkWidget *v_box = create_vertical_box(10, 0, 0, 0, 0);
