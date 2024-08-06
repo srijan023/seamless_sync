@@ -1,6 +1,8 @@
 # Build dir
 /build
 
+*.gitignore
+
 # Clangd cache dir
 /.cache
 
@@ -12,3 +14,4 @@
 ipAddress.*
 trial.c
 trial*
+temp*
