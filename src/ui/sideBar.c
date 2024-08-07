@@ -1,6 +1,6 @@
-#include "../getMyIp.c"
+// #include "../getMyIp.c"
+#include "createVerticalBox.c"
 #include "onSidebarItemSelected.c"
-#include "verticalBox.c"
 
 void create_sidebar(GtkWidget *h_box, GtkWidget *v_box, char *items[],
                     int n_items) {
@@ -12,7 +12,7 @@ void create_sidebar(GtkWidget *h_box, GtkWidget *v_box, char *items[],
   GtkWidget *sticky_button = gtk_button_new_with_label("Refresh");
   gtk_box_append(GTK_BOX(sticky_box), sticky_button);
 
-  GtkWidget *frame = gtk_frame_new(findMyIP().message);
+  GtkWidget *frame = gtk_frame_new("Ip address");
   gtk_frame_set_label_align(GTK_FRAME(frame), 0.5);
   gtk_frame_set_child(GTK_FRAME(frame), sticky_box);
   gtk_box_append(GTK_BOX(sidebar_container), frame);

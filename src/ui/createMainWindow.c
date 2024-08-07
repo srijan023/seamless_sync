@@ -1,9 +1,8 @@
-#include "button.c"
-#include "gtk/gtk.h"
-#include "headerBar.c"
-#include "image.c"
-#include "onStartClicked.c"
-#include "wrappedLabel.c"
+#include "./button.c"
+#include "./createWrappedLabel.c"
+#include "./headerBar.c"
+#include "./image.c"
+#include "./onStartClicked.c"
 
 gboolean check_network_status(gpointer user_data) {
   NetworkStatusData *app_data = (NetworkStatusData *)user_data;
@@ -12,7 +11,7 @@ gboolean check_network_status(gpointer user_data) {
   if (findMyIP().status != -1) {
     gtk_label_set_text(GTK_LABEL(app_data->label),
                        "You are ready to start the SSDP Listener. Please click "
-                       "the  'Start' button below.");
+                       "the 'Start' button below.");
     gtk_widget_set_sensitive(app_data->button, TRUE);
   } else {
     gtk_label_set_text(
@@ -37,42 +36,40 @@ GtkWidget *create_main_window(GtkApplication *app) {
   GtkWidget *header = create_header_bar();
   gtk_window_set_titlebar(GTK_WINDOW(window), header);
 
-  GtkWidget *box = create_vertical_box(10, 20, 20, 20, 20);
-  GtkWidget *image = create_image("../include/image.png", 200, 200);
+  GtkWidget *main_vertical_box = create_vertical_box(10, 20, 20, 20, 20);
+  GtkWidget *logo_image = create_image("../include/image.png", 200, 200);
 
   start_data->window = window;
   start_data->timeout_id =
       g_timeout_add_seconds(4, check_network_status, app_data);
 
-  GtkWidget *button =
+  GtkWidget *start_button =
       create_button("Start", G_CALLBACK(on_start_clicked), start_data);
 
-  GtkWidget *label;
+  GtkWidget *info_label;
 
   if (findMyIP().status != -1) {
     g_print("Device is connected to the network.\n");
-    label = create_wrapped_label(
+    info_label = create_wrapped_label(
         "You are ready to start the SSDP Listener. Please click "
-        "the  'Start' button below.");
-    gtk_label_set_text(GTK_LABEL(label),
-                       "You are ready to start the SSDP Listener. Please click "
-                       "the 'Start' button below.");
-    gtk_widget_set_sensitive(button, TRUE);
+        "the 'Start' button below.");
+    gtk_widget_set_sensitive(start_button, TRUE);
   } else {
     g_print("Device is not connected to the network.\n");
-    label = create_wrapped_label(
+    info_label = create_wrapped_label(
         "Your device needs to be connected to any network before you proceed. "
         "Please check the network connection of your device");
-    gtk_widget_set_sensitive(button, FALSE);
+
+    gtk_widget_set_sensitive(start_button, FALSE);
   }
 
-  gtk_box_append(GTK_BOX(box), label);
-  gtk_box_append(GTK_BOX(box), image);
-  gtk_box_append(GTK_BOX(box), button);
-  gtk_window_set_child(GTK_WINDOW(window), box);
+  gtk_box_append(GTK_BOX(main_vertical_box), info_label);
+  gtk_box_append(GTK_BOX(main_vertical_box), logo_image);
+  gtk_box_append(GTK_BOX(main_vertical_box), start_button);
+  gtk_window_set_child(GTK_WINDOW(window), main_vertical_box);
 
-  app_data->label = label;
-  app_data->button = button;
+  app_data->label = info_label;
+  app_data->button = start_button;
   start_data->free_data = app_data;
 
   return window;
