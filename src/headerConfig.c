@@ -7,12 +7,13 @@
 
 #pragma comment(lib, "ws2_32.lib")
 #elif __linux__
+#include <arpa/inet.h>
 #include <netdb.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 #endif

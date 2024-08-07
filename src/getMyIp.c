@@ -1,5 +1,5 @@
+#include "../include/UDPErrorHandle.h"
 #include "../include/customDataTypes.h"
-#include "UDPErrorHandler.c"
 #include "headerConfig.c"
 
 struct customAddInfo findMyIP() {
