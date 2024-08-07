@@ -5,18 +5,6 @@
 #include <gio/gio.h>
 #include <pthread.h>
 
-// Structure to hold data for updating UI
-typedef struct {
-  GtkWidget *h_box;
-  GtkWidget *v_box;
-  struct ssdpMessage result;
-} UiUpdateData;
-
-typedef struct {
-  GtkWidget *window;
-  guint timeout_id;
-} StartData;
-
 static void update_ui(gpointer user_data) {
   UiUpdateData *data = (UiUpdateData *)user_data;
   g_print("%s", data->result.message);
@@ -65,40 +53,36 @@ void on_start_clicked(GtkWidget *widget, gpointer data) {
     user_data->timeout_id = 0;
     g_print("Periodic(5s) network status check stopped\n");
   }
+  g_free(user_data->free_data);
+  g_print("Network status data is freed from the memory.\n");
 
   GtkWindow *window = GTK_WINDOW(user_data->window);
 
   // Create the new main content area
   GtkWidget *v_box = create_vertical_box(10, 0, 0, 0, 0);
-  g_print("%s\n", "v-box created");
 
   // Create the box containing the sidebar and the main content area
   GtkWidget *h_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  g_print("%s\n", "h-box created");
 
   GtkWidget *old_child = gtk_window_get_child(window);
   if (old_child) {
     gtk_window_set_child(window, NULL); // Remove old child
     gtk_widget_unparent(old_child);     // Unparent old child
   }
-  g_print("%s\n", "old child of window are removed");
+  g_print("Old child of windows: label image and button are removed\n");
 
   UiUpdateData *ui_data = g_new0(UiUpdateData, 1);
   ui_data->h_box = h_box;
   ui_data->v_box = v_box;
-  g_print("h-box and v-box inserted in uiupdate\n");
 
   GTask *task = g_task_new(NULL, NULL, on_ssdp_scan_completed, ui_data);
-  g_print("new task created\n");
+  g_print("New task created.\n");
+
   g_task_run_in_thread(task, run_ssdp_scan);
-  g_print("run ssdp scan is run in thread\n");
+  g_print("run ssdp scan is run in thread.\n");
   g_object_unref(task);
-  g_print("task is unreffed\n");
 
   gtk_box_append(GTK_BOX(h_box), v_box);
-  g_print("%s\n", "v-box appended to h-box");
 
-  // set the new child widget for the window
   gtk_window_set_child(window, h_box);
-  g_print("%s\n", "h-box appended to window");
 }

@@ -5,14 +5,10 @@
 #include "onStartClicked.c"
 #include "wrappedLabel.c"
 
-typedef struct {
-  GtkWidget *label;
-  GtkWidget *button;
-} NetworkStatusData;
-
 gboolean check_network_status(gpointer user_data) {
   NetworkStatusData *app_data = (NetworkStatusData *)user_data;
 
+  g_print("Running check network status.\n");
   if (findMyIP().status != -1) {
     gtk_label_set_text(GTK_LABEL(app_data->label),
                        "You are ready to start the SSDP Listener. Please click "
@@ -46,8 +42,7 @@ GtkWidget *create_main_window(GtkApplication *app) {
 
   start_data->window = window;
   start_data->timeout_id =
-      g_timeout_add_seconds(5, check_network_status, app_data);
-  g_print("Periodic network scan on every 5 seconds is carried out\n");
+      g_timeout_add_seconds(4, check_network_status, app_data);
 
   GtkWidget *button =
       create_button("Start", G_CALLBACK(on_start_clicked), start_data);
@@ -55,11 +50,16 @@ GtkWidget *create_main_window(GtkApplication *app) {
   GtkWidget *label;
 
   if (findMyIP().status != -1) {
+    g_print("Device is connected to the network.\n");
     label = create_wrapped_label(
         "You are ready to start the SSDP Listener. Please click "
         "the  'Start' button below.");
+    gtk_label_set_text(GTK_LABEL(label),
+                       "You are ready to start the SSDP Listener. Please click "
+                       "the 'Start' button below.");
     gtk_widget_set_sensitive(button, TRUE);
   } else {
+    g_print("Device is not connected to the network.\n");
     label = create_wrapped_label(
         "Your device needs to be connected to any network before you proceed. "
         "Please check the network connection of your device");
@@ -73,6 +73,7 @@ GtkWidget *create_main_window(GtkApplication *app) {
 
   app_data->label = label;
   app_data->button = button;
+  start_data->free_data = app_data;
 
   return window;
 }
