@@ -1,8 +1,8 @@
-#include "./button.c"
-#include "./createWrappedLabel.c"
-#include "./headerBar.c"
-#include "./image.c"
-#include "./onStartClicked.c"
+#include "./createWrappedLabel.h"
+// #include "./headerBar.c"
+#include "./onStartClicked.h"
+#include "createButton.h"
+#include "createImage.h"
 
 gboolean check_network_status(gpointer user_data) {
   NetworkStatusData *app_data = (NetworkStatusData *)user_data;
@@ -33,8 +33,8 @@ GtkWidget *create_main_window(GtkApplication *app) {
   gtk_window_set_default_size(GTK_WINDOW(window), 400, 600);
   g_print("Window of 400x600 created\n");
 
-  GtkWidget *header = create_header_bar();
-  gtk_window_set_titlebar(GTK_WINDOW(window), header);
+  // GtkWidget *header = create_header_bar();
+  // gtk_window_set_titlebar(GTK_WINDOW(window), header);
 
   GtkWidget *main_vertical_box = create_vertical_box(10, 20, 20, 20, 20);
   GtkWidget *logo_image = create_image("../include/image.png", 200, 200);

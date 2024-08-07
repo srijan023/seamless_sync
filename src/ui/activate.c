@@ -1,4 +1,4 @@
-#include "createMainWindow.c"
+#include "createMainWindow.h"
 #include <gtk/gtk.h>
 
 void activate(GtkApplication *app, gpointer data) {

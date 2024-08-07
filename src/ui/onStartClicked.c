@@ -1,5 +1,5 @@
-#include "./createVerticalBox.c"
 #include "SSDPListenerConnection.h"
+#include "createVerticalBox.h"
 #include "customDataTypes.h"
 #include "getMyIp.h"
 #include "gtk/gtk.h"
