@@ -1,8 +1,8 @@
 #include "SSDPListenerConnection.h"
 #include "createVerticalBox.h"
-#include "customDataTypes.h"
 #include "getMyIp.h"
 #include "gtk/gtk.h"
+#include "uiCustomData.h"
 
 static void update_ui(gpointer user_data) {
   UiUpdateData *data = (UiUpdateData *)user_data;

@@ -1,8 +1,10 @@
 #include "./createWrappedLabel.h"
-// #include "./headerBar.c"
 #include "./onStartClicked.h"
 #include "createButton.h"
 #include "createImage.h"
+#include "createVerticalBox.h"
+#include "getMyIp.h"
+#include "uiCustomData.h"
 
 gboolean check_network_status(gpointer user_data) {
   NetworkStatusData *app_data = (NetworkStatusData *)user_data;
