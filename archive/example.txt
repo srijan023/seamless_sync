@@ -1,0 +1,1 @@
+This is an example text to encrypt and decrypt
