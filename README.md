@@ -1,12 +1,3 @@
-## Qt
-Open qtUi with qt creator.
-- design UI in `mainwindow.ui`.
-- code UI in `mainwindow.cpp`.
-
-### Current issue to fix
-- box width for the sent message adopts the width of new message if new message is of greater length.
-- Set `chat_field` always at the bottom. Try this if it works for you : `ui->chat_field->verticalScrollBar->setValue(ui->chat_field->maximum())` 
-
 ## Compiling with gtk4
 
 At first, create a `build` dir in project folder and navigate to the newly created `build` dir.
@@ -18,6 +9,8 @@ This will create an executable in build dir..
 
 - Execute using `bin/ssync`
 
+> [!CAUTION]
+> If the above compilation does not work due to an error regarding G_APPLICATION_DEFAULT_FLAGS, this could be due to your OS providing an older version of GLib. For GLib versions older than 2.74, you will need to replace **G_APPLICATION_DEFAULT_FLAGS** with **G_APPLICATION_FLAGS_NONE** in _src/main.c_.
 
 # Information about the windows socket
 
@@ -26,7 +19,6 @@ This will create an executable in build dir..
 ## addrinfo
 
 It is a C structure with the following data members
-
 ```c
 struct addrinfo{
     ai_flags = additional information for address resolution
@@ -42,8 +34,8 @@ struct addrinfo{
 
 ## Common Flags
 
-`AI_PASSIVE` : indicates socket will be used to bind  
-`AI_CANONNAME` : requests a cannonical hostname  
+`AI_PASSIVE` : indicates socket will be used to bind
+`AI_CANONNAME` : requests a canonical hostname
 `AI_NUMERICHOST`: specifies that hostname should be used as a numeric address string
 
 ## sockaddr
@@ -69,7 +61,7 @@ memset(address_start, value, size);
 
 ## Some Additional Functions
 
-**htonl** : host to network long data type conversion  
+**htonl** : host to network long data type conversion
 **htons** : host to network short data type conversion
 
 ## Socket Creation
@@ -101,7 +93,7 @@ This function `return` either the number of bytes sent or `-1` for failure
 
 ### Custom Data Types Header file (`customDataTypes.h`)
 
-This header file includes all the custom made sturctures for the project, which currently contains
+This header file includes all the custom made structures for the project, which currently contains
 
 1. `customAddInfo`:
    It includes two primitive data types, `int` and `char*` which are used mostly to return the status and message from a function.
@@ -110,7 +102,7 @@ This header file includes all the custom made sturctures for the project, which 
 
 This header file is of a function named `findMyIp()` which returns the IP address of the current working device in the format of `customAddInfo`.
 
-**Working of the function**  
+**Working of the function**
 In this function we create a UDP Socket and connect it to the Google DNS Server and obtain the IP address of the interface used to make that connection.
 
 **Return Value:** This function returns the message in the format of `customAddInfo` which is the **status** of function execution and the **message** with the IP address of the interface.
@@ -121,7 +113,7 @@ This is used to define a function named `SSDPListen` which is used to listen to 
 
 **Parameters:** This `SSDPListen()` function takes in one addition parameter which is the address of an integer, it is received by an integer pointer and is used to control the listening behavior. If the value of the integer pointed by that pointer is 0 then the listening behavior is stopped.
 
-**Return Value:** This function returns the message in the format of `customAddInfo` which is the **status** of function execution and the **message** with the statment of how many successful SSDP requests were listened.
+**Return Value:** This function returns the message in the format of `customAddInfo` which is the **status** of function execution and the **message** with the statement of how many successful SSDP requests were listened.
 
 ### `UDPErrorHandle.h`
 
