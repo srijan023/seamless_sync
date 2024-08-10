@@ -119,6 +119,7 @@ void keyExpansion(const uint8_t *key, uint32_t *expandedKeys) {
     0xabf71588
     0x09cf4f3c
     */
+    // created uint32_t to prevent overflow
     expandedKeys[i] =
         ((uint32_t)key[4 * i] << 24) | ((uint32_t)key[4 * i + 1] << 16) |
         ((uint32_t)key[4 * i + 2] << 8) | ((uint32_t)key[4 * i + 3]);
@@ -408,15 +409,16 @@ void decryptionAES(uint8_t *state, const uint32_t *expandedKeys) {
   addRoundKey(state, expandedKeys);
 }
 
-void padBuffer(char *buffer, int *size) {
+void padBuffer(char *buffer, size_t *size) {
+  // PKCS#7 padding
   int padLength = AES_BLOCK_SIZE - (*size % AES_BLOCK_SIZE);
   for (int i = 0; i < padLength; i++) {
-    buffer[*size + 1] = padLength;
+    buffer[*size + i] = padLength;
   }
   *size += padLength;
 }
 
-char *readFile(const char *filePath, int *fileSize) {
+char *readFile(const char *filePath, size_t *fileSize) {
   FILE *fp = fopen(filePath, "rb");
   if (fp == NULL) {
     printf("could not open file %s\n", filePath);
@@ -437,17 +439,18 @@ char *readFile(const char *filePath, int *fileSize) {
   fread(buffer, 1, *fileSize, fp);
   fclose(fp);
 
-  padBuffer(buffer, fileSize);
   return buffer;
 }
 
 void encryptFile(const char *inputPath, const char *outputPath,
                  const uint8_t *key) {
-  int fileSize;
+  size_t fileSize;
   char *buffer = readFile(inputPath, &fileSize);
   if (buffer == NULL) {
     return;
   }
+
+  padBuffer(buffer, &fileSize);
 
   uint32_t expandedKeys[44];
   keyExpansion(key, expandedKeys);
@@ -468,9 +471,28 @@ void encryptFile(const char *inputPath, const char *outputPath,
   free(buffer);
 }
 
+int removePadding(char *buffer, size_t length) {
+  if (length == 0) {
+    return -1;
+  }
+
+  size_t padding_length = buffer[length - 1];
+  if (padding_length > AES_BLOCK_SIZE || padding_length == 0)
+    return -1;
+
+  for (size_t i = 0; i < padding_length; i++) {
+    if (buffer[length - 1 - i] != padding_length) {
+      return -1;
+    }
+  }
+
+  length -= padding_length;
+  return length;
+}
+
 void decryptFile(const char *inputPath, const char *outputPath,
                  const uint8_t *key) {
-  int fileSize;
+  size_t fileSize;
   char *buffer = readFile(inputPath, &fileSize);
   if (buffer == NULL) {
     return;
@@ -490,6 +512,13 @@ void decryptFile(const char *inputPath, const char *outputPath,
     return;
   }
 
+  size_t res = removePadding(buffer, fileSize);
+  if (res <= 0) {
+    printf("Failed removing padding\n");
+  } else {
+    fileSize = res;
+  }
+
   fwrite(buffer, 1, fileSize, outputFile);
   fclose(outputFile);
   free(buffer);
@@ -505,31 +534,5 @@ int main() {
 
   encryptFile(inputFilePath, encryptedFilePath, key);
   decryptFile(encryptedFilePath, decryptedFilePath, key);
-
-  /*uint8_t state[4][4] = {{0x32, 0x43, 0xf6, 0xa8},*/
-  /*                       {0x88, 0x5a, 0x30, 0x8d},*/
-  /*                       {0x31, 0x31, 0x98, 0xa2},*/
-  /*                       {0xe0, 0x37, 0x07, 0x34}};*/
-  /*uint32_t expandedKeys[44];*/
-  /*keyExpansion(key, expandedKeys);*/
-  /**/
-  /*for (int i = 0; i < 4; i++) {*/
-  /*  for (int j = 0; j < 4; j++) {*/
-  /*    printf("%d ", state[i][j]);*/
-  /*  }*/
-  /*  printf("\n");*/
-  /*}*/
-  /**/
-  /*printf("\n");*/
-  /**/
-  /*encryptionAES((uint8_t *)state, expandedKeys);*/
-  /*decryptionAES((uint8_t *)state, expandedKeys);*/
-  /**/
-  /*for (int i = 0; i < 4; i++) {*/
-  /*  for (int j = 0; j < 4; j++) {*/
-  /*    printf("%d ", state[i][j]);*/
-  /*  }*/
-  /*  printf("\n");*/
-  /*}*/
   return 0;
 }
