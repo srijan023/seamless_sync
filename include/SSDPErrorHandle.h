@@ -1,4 +1,4 @@
-#ifndef SDPERRORHANDLER_H
-#define SDPERRORHANDLER_H
+#ifndef SSDPERRORHANDLER_H
+#define SSDPERRORHANDLER_H
 #include "../src/SSDPErrorHandle.c"
 #endif

@@ -1,0 +1,24 @@
+size_t removePadding(char *buffer, size_t length) {
+    if (length == 0) {
+        return 0;  // Return 0 if the buffer is empty
+    }
+
+    size_t padding_length = buffer[length - 1];
+    printf("Last byte (padding length): %zu\n", padding_length);
+
+    // Check for valid padding length
+    if (padding_length > AES_BLOCK_SIZE || padding_length == 0) {
+        return 0;  // Return 0 on invalid padding
+    }
+
+    // Verify all padding bytes
+    for (size_t i = 0; i < padding_length; i++) {
+        if (buffer[length - 1 - i] != padding_length) {
+            return 0;  // Return 0 on invalid padding
+        }
+    }
+
+    // Return new length after removing padding
+    return length - padding_length;
+}
+

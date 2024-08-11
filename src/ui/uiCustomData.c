@@ -7,9 +7,11 @@ typedef struct {
 } NetworkStatusData;
 
 typedef struct {
-  GtkWidget *h_box;
   GtkWidget *v_box;
   struct ssdpMessage result;
+  GtkWidget *spinner;
+  GtkWidget *label_horizontal_box;
+  GtkWidget *spin_label;
 } UiUpdateData;
 
 typedef struct {
@@ -17,3 +19,8 @@ typedef struct {
   guint timeout_id;
   NetworkStatusData *free_data;
 } StartData;
+
+typedef struct {
+  char myIp[16];
+  double timer;
+} JoinSSDPThread;
