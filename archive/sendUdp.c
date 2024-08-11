@@ -7,7 +7,5 @@ int main() {
           "Man: ssdp:discover\nST: seamless:devices_all\nMX: 5",
           "1233232");
 
-  printf("%ld", sizeof(message));
-
-  sendUDP(message, sizeof(message), "1900", "239:255:255:250", 20);
+  sendUDP(message, sizeof(message), "1900", "239.255.255.250", 3.0);
 }

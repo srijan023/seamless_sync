@@ -52,7 +52,7 @@ static void run_ssdp_scan(GTask *task, gpointer source_object, gpointer data,
   g_print("here is run ssdp scan\n");
   UiUpdateData *ui_data = (UiUpdateData *)data;
 
-  struct ssdpMessage *revMsg = SSDPListen();
+  struct ssdpMessage *revMsg = SSDPListen(10);
   g_print("run ssdp listen function\n");
   if (g_task_return_error_if_cancelled(task)) {
     return;
@@ -124,7 +124,7 @@ void on_start_clicked(GtkButton *button, gpointer data) {
 
   // JoinSSDPThread *thread_data;
   strcpy(thread_data->myIp, findMyIP().message);
-  thread_data->timer = 20;
+  thread_data->timer = 5.0;
   GThread *join_ssdp_thread = g_thread_new("join_ssdp", joinSSDP, thread_data);
   g_thread_unref(join_ssdp_thread);
 
