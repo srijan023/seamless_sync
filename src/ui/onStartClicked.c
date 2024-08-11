@@ -122,6 +122,9 @@ void on_start_clicked(GtkButton *button, gpointer data) {
   g_task_run_in_thread(task, run_ssdp_scan);
   g_object_unref(task);
 
+  // JoinSSDPThread *thread_data;
+  strcpy(thread_data->myIp, findMyIP().message);
+  thread_data->timer = 20;
   GThread *join_ssdp_thread = g_thread_new("join_ssdp", joinSSDP, thread_data);
   g_thread_unref(join_ssdp_thread);
 
@@ -136,7 +139,4 @@ void on_start_clicked(GtkButton *button, gpointer data) {
   ui_data->v_box = main_vertical_box;
   ui_data->spin_label = spin_label;
   ui_data->spinner = spinner;
-
-  thread_data->myIp = findMyIP().message;
-  thread_data->timer = 20;
 }

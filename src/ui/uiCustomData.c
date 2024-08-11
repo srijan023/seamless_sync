@@ -21,6 +21,6 @@ typedef struct {
 } StartData;
 
 typedef struct {
-  char *myIp;
+  char myIp[16];
   double timer;
 } JoinSSDPThread;

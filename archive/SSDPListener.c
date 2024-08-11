@@ -27,7 +27,7 @@
 int main() {
   pthread_t SSDPThread;
   int doLooping = 1;
-  pthread_create(&SSDPThread, NULL, SSDPListen, &doLooping);
+  pthread_create(&SSDPThread, NULL, SSDPListen, NULL);
   sleep(10); // suspend
   doLooping = 0;
   struct ssdpMessage *revMsg;
