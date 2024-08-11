@@ -1,5 +1,6 @@
 #include "../include/SSDPErrorHandle.h"
 #include "../include/customDataTypes.h"
+#include "../include/getMyIp.h"
 #include "../src/headerConfig.c"
 // #include <ctime>
 // #include <cstdlib>
@@ -25,8 +26,9 @@ char **doubleArraySize(char **arr, int size, int *newSize) {
   return newArr;
 }
 
-void *SSDPListen() {
+void *SSDPListen(long duration) {
   printf("I am inside ssdp listen\n");
+  struct customAddInfo myIp = findMyIP();
   struct ssdpMessage *msg =
       (struct ssdpMessage *)malloc(sizeof(struct ssdpMessage));
 #ifdef _WIN32
@@ -121,11 +123,10 @@ void *SSDPListen() {
   // while true send SSDP messages
   // time_t start_time = time(NULL);
   printf("I am entering the while loop\n");
-  clock_t start_time = clock();
-  double duration = 5.0;
+  time_t start_time = time(NULL);
   while (1) {
-    clock_t current_time = clock();
-    double elapsed_time = (double)(current_time - start_time) / CLOCKS_PER_SEC;
+    time_t current_time = time(NULL);
+    long elapsed_time = (long)(current_time - start_time);
     if (elapsed_time >= duration) {
       break;
     }
@@ -138,7 +139,7 @@ void *SSDPListen() {
     FD_ZERO(&read_fds);
     FD_SET(SSDPListener, &read_fds);
 
-    timeout.tv_sec = 5;
+    timeout.tv_sec = 2;
     timeout.tv_usec = 0;
 
     int activity = select(SSDPListener + 1, &read_fds, NULL, NULL, &timeout);
@@ -156,7 +157,7 @@ void *SSDPListen() {
       int nbytes =
           recvfrom(SSDPListener, msgBuffer, 256, 0,
                    (struct sockaddr *)&theirAddrs, (socklen_t *)&addrlen);
-      printf("recvFrom completed\n");
+      // printf("recvFrom completed\n msg is: %s", msgBuffer);
       if (nbytes > 0) {
         msgBuffer[nbytes] = '\0';
         // checking if seamless is in the SSDP request header
@@ -168,6 +169,9 @@ void *SSDPListen() {
             char ip[16]; // 255.255.255.255
             sscanf(ipStart, "%15s", ip);
             printf("%s\n", ip);
+            if (strcmp(ip, myIp.message) == 0) {
+              continue;
+            }
             if (isPresent(IpList, ip, count + 1)) {
               continue;
             }

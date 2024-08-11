@@ -1,9 +1,10 @@
 #include "../include/UDPErrorHandle.h"
 #include "../include/customDataTypes.h"
 #include "headerConfig.c"
+#include <time.h>
 
 struct customAddInfo sendUDP(char *msg, int msgLength, char *port, char *ip,
-                             double sendTimeOut) {
+                             long sendTimeOut) {
   struct customAddInfo returnMessage;
 #ifdef _WIN32
   WSADATA wsaData;
@@ -33,52 +34,51 @@ struct customAddInfo sendUDP(char *msg, int msgLength, char *port, char *ip,
   dest_addr.sin_addr.s_addr = inet_addr(ip);
 
   int status;
-  // allowing for multiple sends over the same port and socket
-  clock_t start_time = clock();
+  time_t start_time = time(NULL);
   double duration = sendTimeOut;
 
   while (1) {
-    clock_t current_time = clock();
-    double elapsed_time = (double)(current_time - start_time) / CLOCKS_PER_SEC;
+    time_t current_time = time(NULL);
+    long elapsed_time = (long)(current_time - start_time);
     if (elapsed_time >= duration) {
       break;
     }
 
-    fd_set sock_fds;
-    struct timeval timeout;
+    // fd_set sock_fds;
+    // struct timeval timeout;
+    //
+    // FD_ZERO(&sock_fds);
+    // FD_SET(sockfd, &sock_fds);
+    //
+    // timeout.tv_sec = 5;
+    // timeout.tv_usec = 0;
+    //
+    // int activity = select(sockfd + 1, &sock_fds, NULL, NULL, &timeout);
+    //
+    // if (activity < 0) {
+    //   handleUDPError("Select error", &returnMessage);
+    //   close(sockfd);
+    //   return returnMessage;
+    // } else if (activity == 0) {
+    //   strcpy(returnMessage.message, "Timeout: 5 seconds passed");
+    //   returnMessage.status = 0;
+    //   break;
+    // }
+    //
+    // if (FD_ISSET(sockfd, &sock_fds)) {
 
-    FD_ZERO(&sock_fds);
-    FD_SET(sockfd, &sock_fds);
-
-    timeout.tv_sec = 5;
-    timeout.tv_usec = 0;
-
-    int activity = select(sockfd + 1, &sock_fds, NULL, NULL, &timeout);
-
-    if (activity < 0) {
-      handleUDPError("Select error", &returnMessage);
-      close(sockfd);
-      return returnMessage;
-    } else if (activity == 0) {
-      strcpy(returnMessage.message, "Timeout: 5 seconds passed");
-      returnMessage.status = 0;
-      break;
-    }
-
-    if (FD_ISSET(sockfd, &sock_fds)) {
-
-      status = sendto(sockfd, msg, msgLength, 0, (struct sockaddr *)&dest_addr,
-                      sizeof(dest_addr));
-      if (status == -1) {
-        handleUDPError("Failure to send message", &returnMessage);
+    status = sendto(sockfd, msg, msgLength, 0, (struct sockaddr *)&dest_addr,
+                    sizeof(dest_addr));
+    if (status == -1) {
+      handleUDPError("Failure to send message", &returnMessage);
 #ifdef _WIN32
-        WSACleanup();
-        closesocket(sockfd);
+      WSACleanup();
+      closesocket(sockfd);
 #elif __linux__
-        close(sockfd);
+      close(sockfd);
 #endif
-        return returnMessage;
-      }
+      return returnMessage;
+      // }
     };
   }
 
