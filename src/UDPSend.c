@@ -34,13 +34,12 @@ struct customAddInfo sendUDP(char *msg, int msgLength, char *port, char *ip,
   dest_addr.sin_addr.s_addr = inet_addr(ip);
 
   int status;
-  // allowing for multiple sends over the same port and socket
   time_t start_time = time(NULL);
   double duration = sendTimeOut;
 
   while (1) {
     time_t current_time = time(NULL);
-    long elapsed_time = (long)(current_time - start_time) / CLOCKS_PER_SEC;
+    long elapsed_time = (long)(current_time - start_time);
     if (elapsed_time >= duration) {
       break;
     }

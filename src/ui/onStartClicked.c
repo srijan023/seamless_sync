@@ -52,7 +52,7 @@ static void run_ssdp_scan(GTask *task, gpointer source_object, gpointer data,
   g_print("here is run ssdp scan\n");
   UiUpdateData *ui_data = (UiUpdateData *)data;
 
-  struct ssdpMessage *revMsg = SSDPListen(4);
+  struct ssdpMessage *revMsg = SSDPListen(5);
   g_print("run ssdp listen function\n");
   if (g_task_return_error_if_cancelled(task)) {
     return;

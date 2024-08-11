@@ -4,7 +4,6 @@
 
 void *joinSSDP(gpointer user_data) {
   JoinSSDPThread *thread_data = (JoinSSDPThread *)user_data;
-  printf("myIp in joinSSDP: %s\n\n", thread_data->myIp);
 
   char *PORT = "1900";
   char *IP = "239.255.255.250";

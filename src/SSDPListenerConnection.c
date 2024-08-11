@@ -124,8 +124,7 @@ void *SSDPListen(long duration) {
   time_t start_time = time(NULL);
   while (1) {
     time_t current_time = time(NULL);
-    long elapsed_time = (long)(current_time - start_time) / CLOCKS_PER_SEC;
-    printf("%ld\n", elapsed_time);
+    long elapsed_time = (long)(current_time - start_time);
     if (elapsed_time >= duration) {
       break;
     }
