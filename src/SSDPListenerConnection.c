@@ -125,6 +125,7 @@ void *SSDPListen(long duration) {
   while (1) {
     time_t current_time = time(NULL);
     long elapsed_time = (long)(current_time - start_time) / CLOCKS_PER_SEC;
+    printf("%ld\n", elapsed_time);
     if (elapsed_time >= duration) {
       break;
     }
@@ -155,7 +156,7 @@ void *SSDPListen(long duration) {
       int nbytes =
           recvfrom(SSDPListener, msgBuffer, 256, 0,
                    (struct sockaddr *)&theirAddrs, (socklen_t *)&addrlen);
-      printf("recvFrom completed\n msg is: %s", msgBuffer);
+      // printf("recvFrom completed\n msg is: %s", msgBuffer);
       if (nbytes > 0) {
         msgBuffer[nbytes] = '\0';
         // checking if seamless is in the SSDP request header
