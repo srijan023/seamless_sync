@@ -118,12 +118,12 @@ void on_start_clicked(GtkButton *button, gpointer data) {
   gtk_widget_set_size_request(GTK_WIDGET(spinner), 50, 50);
   gtk_spinner_start(GTK_SPINNER(spinner));
 
-  GThread *join_ssdp_thread = g_thread_new("join_ssdp", joinSSDP, thread_data);
-  g_thread_unref(join_ssdp_thread);
-
   GTask *task = g_task_new(NULL, NULL, on_ssdp_scan_completed, ui_data);
   g_task_run_in_thread(task, run_ssdp_scan);
   g_object_unref(task);
+
+  GThread *join_ssdp_thread = g_thread_new("join_ssdp", joinSSDP, thread_data);
+  g_thread_unref(join_ssdp_thread);
 
   gtk_box_append(GTK_BOX(main_vertical_box), label_horizontal_box);
   gtk_box_append(GTK_BOX(main_vertical_box), list_vertical_box);
