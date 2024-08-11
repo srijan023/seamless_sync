@@ -1,5 +1,6 @@
 #include "../include/SSDPErrorHandle.h"
 #include "../include/customDataTypes.h"
+#include "../include/getMyIp.h"
 #include "../src/headerConfig.c"
 // #include <ctime>
 // #include <cstdlib>
@@ -27,6 +28,7 @@ char **doubleArraySize(char **arr, int size, int *newSize) {
 
 void *SSDPListen(long duration) {
   printf("I am inside ssdp listen\n");
+  struct customAddInfo myIp = findMyIP();
   struct ssdpMessage *msg =
       (struct ssdpMessage *)malloc(sizeof(struct ssdpMessage));
 #ifdef _WIN32
@@ -167,6 +169,9 @@ void *SSDPListen(long duration) {
             char ip[16]; // 255.255.255.255
             sscanf(ipStart, "%15s", ip);
             printf("%s\n", ip);
+            if (strcmp(ip, myIp.message) == 0) {
+              continue;
+            }
             if (isPresent(IpList, ip, count + 1)) {
               continue;
             }
