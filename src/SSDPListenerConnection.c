@@ -121,7 +121,6 @@ void *SSDPListen(long duration) {
   }
 
   // while true send SSDP messages
-  // time_t start_time = time(NULL);
   printf("I am entering the while loop\n");
   time_t start_time = time(NULL);
   while (1) {
@@ -130,16 +129,14 @@ void *SSDPListen(long duration) {
     if (elapsed_time >= duration) {
       break;
     }
-    printf("n iteration of loop completed\n");
 
-    printf("I am inside while loop\n");
     fd_set read_fds;
     struct timeval timeout;
 
     FD_ZERO(&read_fds);
     FD_SET(SSDPListener, &read_fds);
 
-    timeout.tv_sec = 2;
+    timeout.tv_sec = 1;
     timeout.tv_usec = 0;
 
     int activity = select(SSDPListener + 1, &read_fds, NULL, NULL, &timeout);
@@ -157,7 +154,7 @@ void *SSDPListen(long duration) {
       int nbytes =
           recvfrom(SSDPListener, msgBuffer, 256, 0,
                    (struct sockaddr *)&theirAddrs, (socklen_t *)&addrlen);
-      // printf("recvFrom completed\n msg is: %s", msgBuffer);
+      printf("\n Message is:\n %s\n", msgBuffer);
       if (nbytes > 0) {
         msgBuffer[nbytes] = '\0';
         // checking if seamless is in the SSDP request header
@@ -168,7 +165,6 @@ void *SSDPListen(long duration) {
             ipStart += strlen(key);
             char ip[16]; // 255.255.255.255
             sscanf(ipStart, "%15s", ip);
-            printf("%s\n", ip);
             if (strcmp(ip, myIp.message) == 0) {
               continue;
             }
