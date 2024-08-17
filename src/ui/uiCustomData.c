@@ -7,10 +7,9 @@ typedef struct {
 } NetworkStatusData;
 
 typedef struct {
-  GtkWidget *v_box;
   struct ssdpMessage result;
+  GtkWindow *window;
   GtkWidget *spinner;
-  GtkWidget *label_horizontal_box;
   GtkWidget *spin_label;
 } UiUpdateData;
 

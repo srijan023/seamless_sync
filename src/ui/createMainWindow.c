@@ -1,4 +1,5 @@
 #include "./onStartClicked.h"
+#include "createButton.h"
 #include "createHeaderBar.h"
 #include "createImage.h"
 
@@ -28,8 +29,8 @@ GtkWidget *create_main_window(GtkApplication *app) {
 
   GtkWidget *window = gtk_application_window_new(app);
   gtk_window_set_title(GTK_WINDOW(window), "Seamless Sync");
-  gtk_window_set_default_size(GTK_WINDOW(window), 400, 600);
-  g_print("Window of 400x600 created\n");
+  gtk_window_set_default_size(GTK_WINDOW(window), 600, 700);
+  g_print("Window of 600x700 created\n");
 
   GtkWidget *header = create_header_bar();
   gtk_window_set_titlebar(GTK_WINDOW(window), header);
