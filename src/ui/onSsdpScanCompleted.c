@@ -1,6 +1,4 @@
-#include "uiCustomData.h"
 #include "updateUiOnScan.h"
-#include <gtk/gtk.h>
 
 static void on_ssdp_scan_completed(GObject *source_object, GAsyncResult *res,
                                    gpointer user_data) {

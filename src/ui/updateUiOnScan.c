@@ -1,4 +1,5 @@
 #include "createWrappedLabel.h"
+#include "getMyIp.h"
 #include "removeOldChild.h"
 #include "uiCustomData.h"
 #include "whileDeviceClicked.h"
@@ -20,6 +21,14 @@ static void update_ui_on_scan(gpointer user_data) {
   gtk_widget_set_vexpand(scrolled_window, TRUE);
 
   GtkWidget *sidebar = gtk_list_box_new();
+
+  GtkWidget *frame = gtk_frame_new(NULL);
+  GtkWidget *custom_label = create_wrapped_label(findMyIP().message);
+  gtk_widget_set_margin_top(custom_label, 5);
+  gtk_widget_set_margin_bottom(custom_label, 5);
+  gtk_frame_set_label_widget(GTK_FRAME(frame), custom_label);
+  gtk_frame_set_label_align(GTK_FRAME(frame), 0.5);
+  gtk_frame_set_child(GTK_FRAME(frame), scrolled_window);
 
   // Remove spinner and its label
   // gtk_spinner_stop(GTK_SPINNER(data->spinner));
@@ -44,8 +53,7 @@ static void update_ui_on_scan(gpointer user_data) {
                    NULL);
 
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), sidebar);
-  gtk_box_append(GTK_BOX(horizontal_box_for_sidebar_and_msgbox),
-                 scrolled_window);
+  gtk_box_append(GTK_BOX(horizontal_box_for_sidebar_and_msgbox), frame);
   gtk_window_set_child(data->window, horizontal_box_for_sidebar_and_msgbox);
 
   for (int i = 0; i < data->result.size; i++) {

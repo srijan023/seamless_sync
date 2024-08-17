@@ -1,10 +1,7 @@
 #include "createVerticalBox.h"
-#include "gtk/gtk.h"
 #include "joinSSDP.h"
 #include "onSsdpScanCompleted.h"
-#include "removeOldChild.h"
 #include "runSsdpScan.h"
-#include "uiCustomData.h"
 
 void on_start_clicked(GtkButton *button, gpointer data) {
   StartData *user_data = (StartData *)data;
