@@ -1,3 +1,4 @@
+#include "createVerticalBox.h"
 #include "joinSSDP.h"
 #include "onSsdpScanCompleted.h"
 #include "runSsdpScan.h"

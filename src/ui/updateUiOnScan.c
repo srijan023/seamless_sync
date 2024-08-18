@@ -1,4 +1,4 @@
-#include "createHeaderBar.h"
+// #include "createHeaderBar.h"
 #include "createWrappedLabel.h"
 #include "getMyIp.h"
 #include "uiCustomData.h"
@@ -11,8 +11,8 @@ static void update_ui_on_scan(gpointer user_data) {
   GtkWidget *horizontal_box_for_sidebar_and_msgbox =
       gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
 
-  GtkWidget *header = create_header_bar();
-  gtk_window_set_titlebar(GTK_WINDOW(data->window), header);
+  // GtkWidget *header = create_header_bar();
+  // gtk_window_set_titlebar(GTK_WINDOW(data->window), header);
 
   GtkWidget *scrolled_window = gtk_scrolled_window_new();
   gtk_widget_set_size_request(scrolled_window, 150, -1);
