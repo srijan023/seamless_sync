@@ -14,7 +14,6 @@ typedef struct {
 } UiUpdateData;
 
 typedef struct {
-  GtkWidget *window;
   guint timeout_id;
   NetworkStatusData *free_data;
 } StartData;

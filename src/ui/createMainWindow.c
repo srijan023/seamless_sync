@@ -1,6 +1,5 @@
 #include "./onStartClicked.h"
 #include "createButton.h"
-#include "createHeaderBar.h"
 #include "createImage.h"
 
 gboolean check_network_status(gpointer user_data) {
@@ -32,13 +31,9 @@ GtkWidget *create_main_window(GtkApplication *app) {
   gtk_window_set_default_size(GTK_WINDOW(window), 600, 700);
   g_print("Window of 600x700 created\n");
 
-  GtkWidget *header = create_header_bar();
-  gtk_window_set_titlebar(GTK_WINDOW(window), header);
-
   GtkWidget *main_vertical_box = create_vertical_box(10, 20, 20, 20, 20);
   GtkWidget *logo_image = create_image("../include/image.png", 200, 200);
 
-  start_data->window = window;
   start_data->timeout_id =
       g_timeout_add_seconds(4, check_network_status, app_data);
 
