@@ -1,10 +1,6 @@
-#include "./createWrappedLabel.h"
 #include "./onStartClicked.h"
 #include "createButton.h"
 #include "createImage.h"
-#include "createVerticalBox.h"
-#include "getMyIp.h"
-#include "uiCustomData.h"
 
 gboolean check_network_status(gpointer user_data) {
   NetworkStatusData *app_data = (NetworkStatusData *)user_data;
@@ -32,16 +28,12 @@ GtkWidget *create_main_window(GtkApplication *app) {
 
   GtkWidget *window = gtk_application_window_new(app);
   gtk_window_set_title(GTK_WINDOW(window), "Seamless Sync");
-  gtk_window_set_default_size(GTK_WINDOW(window), 400, 600);
-  g_print("Window of 400x600 created\n");
-
-  // GtkWidget *header = create_header_bar();
-  // gtk_window_set_titlebar(GTK_WINDOW(window), header);
+  gtk_window_set_default_size(GTK_WINDOW(window), 600, 700);
+  g_print("Window of 600x700 created\n");
 
   GtkWidget *main_vertical_box = create_vertical_box(10, 20, 20, 20, 20);
   GtkWidget *logo_image = create_image("../include/image.png", 200, 200);
 
-  start_data->window = window;
   start_data->timeout_id =
       g_timeout_add_seconds(4, check_network_status, app_data);
 

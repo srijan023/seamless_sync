@@ -1,5 +1,4 @@
 #include "createMainWindow.h"
-#include <gtk/gtk.h>
 
 void activate(GtkApplication *app, gpointer data) {
   GtkWidget *window = create_main_window(app);
