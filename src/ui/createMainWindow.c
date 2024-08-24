@@ -46,13 +46,15 @@ GtkWidget *create_main_window(GtkApplication *app) {
     g_print("Device is connected to the network.\n");
     info_label = create_wrapped_label(
         "You are ready to start the SSDP Listener. Please click "
-        "the 'Start' button below.");
+        "the 'Start' button below.",
+        30);
     gtk_widget_set_sensitive(start_button, TRUE);
   } else {
     g_print("Device is not connected to the network.\n");
     info_label = create_wrapped_label(
         "Your device needs to be connected to any network before you proceed. "
-        "Please check the network connection of your device");
+        "Please check the network connection of your device",
+        30);
 
     gtk_widget_set_sensitive(start_button, FALSE);
   }
