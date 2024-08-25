@@ -25,7 +25,7 @@ void on_refresh_clicked(GtkButton *button) {
   gtk_widget_set_size_request(GTK_WIDGET(spinner), 50, 50);
   gtk_spinner_start(GTK_SPINNER(spinner));
 
-  GtkWidget *spin_label = create_wrapped_label("Scanning for devices...");
+  GtkWidget *spin_label = create_wrapped_label("Scanning for devices...", 30);
   gtk_widget_set_margin_top(spin_label, 20);
 
   GTask *task = g_task_new(NULL, NULL, on_ssdp_scan_completed, ui_data);

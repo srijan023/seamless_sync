@@ -47,7 +47,7 @@ int *getServerSocket(char *ip) {
     return NULL;
   }
 
-  printf("[+] socket create successfully");
+  printf("[+] socket create successfully\n");
   memset(&servAddr, 0, sizeof(servAddr));
   servAddr.sin_family = AF_INET;
   servAddr.sin_addr.s_addr = INADDR_ANY; // accept connection from any interface
@@ -59,7 +59,7 @@ int *getServerSocket(char *ip) {
     perror("[-] Binding to the socket failed");
     return NULL;
   }
-  printf("[+] Socekt successfully bound to server address\n");
+  printf("[+] Socket successfully bound to server address\n");
 
   status = listen(servSocket, 5);
 

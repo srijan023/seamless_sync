@@ -3,6 +3,7 @@
 #include "createImage.h"
 
 gboolean check_network_status(gpointer user_data) {
+
   NetworkStatusData *app_data = (NetworkStatusData *)user_data;
 
   g_print("Running check network status.\n");
