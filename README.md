@@ -32,10 +32,11 @@ This will create an executable in build dir..
 - File change detection using double hashing technique
 - File synchronization across multiple devices
 
+## Contributing
+
 > [!Caution]
 > The project is not yet open for contributions, wait for further updates.
 
-## Contributing
 Seamless Sync is an open-source project, and contributions are welcome! Whether it's reporting bugs, suggesting new features, or contributing code, your help is appreciated.
 
 ## License
