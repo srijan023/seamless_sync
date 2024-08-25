@@ -15,5 +15,6 @@ struct ssdpMessage {
 struct fileInfo {
   char type;
   char name[50];
+  long long size;
 };
 #endif

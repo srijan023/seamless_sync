@@ -42,12 +42,18 @@ int main() {
     if (strncmp(buffer, "exit", 4) == 0) {
       continueCommunication = 0;
     }
+    if (strncmp(buffer, "/file", 5) == 0) {
+      printf("[+] Sending files \n");
+    }
     memset(buffer, '\0', sizeof(buffer));
     if (continueCommunication) {
       recv(clientSocket, buffer, sizeof(buffer), 0);
       printf("Them: %s\n", buffer);
       if (strncmp(buffer, "exit", 4) == 0) {
         continueCommunication = 0;
+      }
+      if (strncmp(buffer, "/file", 5) == 0) {
+        printf("Receiving file \n");
       }
     }
   }
