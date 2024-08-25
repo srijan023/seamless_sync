@@ -527,6 +527,12 @@ void decryptFile(const char *inputPath, const char *outputPath,
 int main() {
   uint8_t key[16];
   generatingAesKey(key, sizeof(key));
+
+  printf("AES KEY IS: \n");
+  for (int i = 0; i < 16; i++) {
+    printf("%u\t", key[i]);
+  }
+  printf("\n");
   /**/
   const char *inputFilePath = "./example.txt";
   const char *encryptedFilePath = "./encrypted.enc";

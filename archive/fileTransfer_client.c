@@ -6,9 +6,10 @@
 
 #define PORT 2326
 #define BACKLOG 5
-#define BUFSIZE 1025 * 8
+#define BUFSIZE 1024 * 8
 
-void receive_file(int server_sock, char *filePath, char *name) {
+void receive_file(int server_sock, char *filePath, char *name,
+                  long long remaining_size) {
   char file_path[BUFSIZE];
   snprintf(file_path, BUFSIZE, "%s/%s", filePath, name);
   FILE *fp = fopen(file_path, "wb");
@@ -16,16 +17,25 @@ void receive_file(int server_sock, char *filePath, char *name) {
     printf("[-] File open error");
     return;
   }
-  printf("This is second\n");
   char buffer[BUFSIZE];
   int n;
-  while ((n = recv(server_sock, buffer, BUFSIZE, 0)) > 0) {
-    printf("Checking: %d and %c\n", n, buffer[0]);
-    if (buffer[0] == 'E' && n == 1) {
-      break;
+
+  while (remaining_size > 0) {
+    n = recv(server_sock, buffer, BUFSIZE, 0);
+
+    if (n > remaining_size) {
+      n = remaining_size;
     }
+
+    remaining_size -= n;
+
+    printf("Received: %d", n);
     fwrite(buffer, 1, n, fp);
   }
+
+  recv(server_sock, buffer, BUFSIZE, 0);
+  printf("This marks the end of the file receiving process \n %s", buffer);
+
   fclose(fp);
 }
 
@@ -45,7 +55,8 @@ void receive_dir(int server_sock, char *dirPath, char *name) {
       // TODO: GET HERE FAST
       receive_dir(server_sock, dir_path, fi.name);
     } else if (fi.type == 'F') {
-      receive_file(server_sock, dir_path, fi.name);
+      // TODO: fix this
+      receive_file(server_sock, dir_path, fi.name, 1024);
     }
   }
 }
@@ -88,6 +99,9 @@ int main() {
   recv(server_sock, &fi, sizeof(fi), 0);
   printf("The file type is %c\n", fi.type);
   printf("The name of the file is %s\n", fi.name);
+  printf("The size of the file id %lld\n", fi.size);
+
+  long long file_size = fi.size;
 
   if (fi.type == 'D') {
     // it is a directory
@@ -97,7 +111,7 @@ int main() {
   } else {
     // it is a file
     // recvFile()
-    receive_file(server_sock, "./", "Tempfile.c");
+    receive_file(server_sock, "./", "Tempfile.c", file_size);
     /*printf("Receiving a file");*/
   }
 

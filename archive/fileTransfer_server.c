@@ -2,6 +2,7 @@
 #include "../src/headerConfig.c"
 #include <asm-generic/socket.h>
 #include <dirent.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
@@ -11,7 +12,43 @@
 #define BUFSIZE                                                                \
   1024 * 8 // setting up the buffer size to be 8kb for efficient transfer
 
-void send_file(int client_sock, char *file_path) {
+/**
+ * Function: findFileSize
+ * ---------------
+ * This function takes in a filePath and tells us the size of that file.
+ *
+ * Parameters:
+ * char* file_path
+ *
+ * Returns:
+ *  long long
+ *
+ * Side Effects:
+ *  None
+ *
+ * Constraints:
+ *  file_path must be a valid path to the file and is a string
+ *
+ * Example Usage:
+ *  filePath("./hello.c")
+ *
+ * Notes:
+ *  None
+ */
+long long findFileSize(char *file_path) {
+  FILE *fp = fopen(file_path, "rb");
+  if (fp == NULL) {
+    printf("[-] Could not open file\n");
+    return -1;
+  }
+
+  fseek(fp, 0, SEEK_END);
+  long long size = ftell(fp);
+  fclose(fp);
+  return size;
+}
+
+void send_file(int client_sock, char *file_path, long long remaining_size) {
   FILE *fp = fopen(file_path, "rb");
   if (fp == NULL) {
     printf("[-] Can't open the file ");
@@ -21,12 +58,22 @@ void send_file(int client_sock, char *file_path) {
   char buffer[BUFSIZE];
 
   int n;
-  while ((n = fread(buffer, 1, BUFSIZE, fp)) > 0) {
+
+  // if the size of the file is greater than the bufsize, files are sent in
+  // parts
+  while (remaining_size > 0) {
+    n = fread(buffer, 1, BUFSIZE, fp);
+    if (n < BUFSIZE) {
+      // if the size of the file read is less than the bufsize, pad it with null
+      // characters
+      memset(buffer + n, 0, BUFSIZE - n);
+    }
+    remaining_size -= n;
     send(client_sock, buffer, n, 0);
-    printf("%d bytes sent", n);
   }
 
   fclose(fp);
+  // to mark the end of file transfer, might not be needed
   send(client_sock, "E", 1, 0);
 }
 
@@ -66,7 +113,8 @@ void send_directory(int client_sock, char *dir_path) {
       strcpy(fi.name, dir->d_name);
       fi.type = 'F';
       send(client_sock, &fi, sizeof(fi), 0);
-      send_file(client_sock, path);
+      // TODO: fix this
+      send_file(client_sock, path, 1024);
     }
   }
   closedir(d);
@@ -165,9 +213,12 @@ int main() {
     // it is a file
     fi.type = 'F';
 
+    long long file_size = findFileSize(file_path);
+    fi.size = file_size;
+
     send(client_sock, &fi, sizeof(fi), 0);
 
-    send_file(client_sock, file_path);
+    send_file(client_sock, file_path, file_size);
   }
 
   close(client_sock);
