@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 int main() {
-  int *connSocket = getServerSocket("127.0.0.1");
+  int *connSocket = getServerSocket("192.168.88.56");
 
   int continueSending = 1;
   char buffer[256];
