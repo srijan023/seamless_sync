@@ -1,4 +1,6 @@
+#include "../include/UDPListen.h"
 #include "../include/UDPSend.h"
+#include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -37,6 +39,7 @@ int *getServerSocket(char *ip) {
   servSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (servSocket == -1) {
     perror("[-] Socket creation failed\n");
+    free(clientConn);
     return NULL;
   }
 
@@ -44,6 +47,7 @@ int *getServerSocket(char *ip) {
       0) {
     printf("[-] Error while setting socket reuseable");
     close(servSocket);
+    free(clientConn);
     return NULL;
   }
 
@@ -57,6 +61,8 @@ int *getServerSocket(char *ip) {
 
   if (status != 0) {
     perror("[-] Binding to the socket failed");
+    free(clientConn);
+    close(servSocket);
     return NULL;
   }
   printf("[+] Socket successfully bound to server address\n");
@@ -65,11 +71,20 @@ int *getServerSocket(char *ip) {
 
   if (status != 0) {
     perror("[-] Listening for incoming connection failed\n");
+    free(clientConn);
+    close(servSocket);
     return NULL;
   }
 
   char *message = "Listening for the connection";
   sendUDP(message, strlen(message), "12345", ip, 3.0);
+
+  struct customAddInfo res = listenUDP("12345", ip);
+  if (res.status != 0) {
+    free(clientConn);
+    close(servSocket);
+    return NULL;
+  }
 
   printf("[+] Listening for incoming connections\n");
 
@@ -79,6 +94,8 @@ int *getServerSocket(char *ip) {
 
   if (clientConn < 0) {
     perror("[-] Client Accept failed\n");
+    free(clientConn);
+    close(servSocket);
     return NULL;
   }
 

@@ -1,4 +1,5 @@
 #include "../include/UDPListen.h"
+#include "../include/UDPSend.h"
 #include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
 #include <sys/socket.h>
@@ -42,6 +43,7 @@ int *getClientSocket(char *ip) {
   *clientSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (clientSocket < 0) {
     perror("[-] Socket could not be created\n");
+    free(clientSocket);
     return NULL;
   }
 
@@ -57,11 +59,16 @@ int *getClientSocket(char *ip) {
 
   struct customAddInfo message = listenUDP("12345", ip);
   if (message.status == 0) {
-    sleep(3);
+    sleep(2);
   }
+
+  char *res = "Ready to connect";
+  sendUDP(res, strlen(res), "12345", ip, 2.0);
 
   if (connect(*clientSocket, (struct sockaddr *)&server, sizeof(server)) != 0) {
     perror("[-] Connection failed\n");
+    close(*clientSocket);
+    free(clientSocket);
     return NULL;
   }
 
