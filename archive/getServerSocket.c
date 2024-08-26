@@ -8,14 +8,21 @@
 /**
  * Function: getServerSocket
  * ---------------
- * Takes in the ip address of the client we wish to connect, generates to
- *
+ * Takes in the ip address of the client we wish to connect, generates the
+ * connection socket and give it back to you.
+ * Under the hood it creates two socket one for the server and another for the
+ * connection, the socket of server is used to listen to the incoming conneciton
+ * connection requests are received across multiple interfaces
+ * finally when the connection is setup, new connection socket is created which
+ * is then returned.
  *
  * Parameters:
  * char* ip(takes in the ip address of the client we wish to connect to)
  *
  * Returns:
- *  returns the pointer to the TCP socket used for communication
+ *  returns the pointer of socket info
+ *  if the status is 0 it means that the socket for the connection is received
+ *  if the status is -1 it means something went wrong.
  *
  * Side Effects:
  *  NONE
@@ -29,8 +36,13 @@
  *
  * Notes:
  *  check out server.c file in archive for further insight.
+ *  check out customDataTypes
  */
-int *getServerSocket(char *ip) {
+struct socketInfo *getServerSocket(char *ip) {
+
+  struct socketInfo *ans;
+  memset(ans->pub_key, '\0', sizeof(ans->pub_key));
+
   struct sockaddr_in servAddr, clientAddr;
   int servSocket;
 
@@ -40,7 +52,9 @@ int *getServerSocket(char *ip) {
   if (servSocket == -1) {
     perror("[-] Socket creation failed\n");
     free(clientConn);
-    return NULL;
+    ans->status = -1;
+    ans->socket = NULL;
+    return ans;
   }
 
   if (setsockopt(servSocket, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) <
@@ -48,7 +62,9 @@ int *getServerSocket(char *ip) {
     printf("[-] Error while setting socket reuseable");
     close(servSocket);
     free(clientConn);
-    return NULL;
+    ans->status = -1;
+    ans->socket = NULL;
+    return ans;
   }
 
   printf("[+] socket create successfully\n");
@@ -63,7 +79,9 @@ int *getServerSocket(char *ip) {
     perror("[-] Binding to the socket failed");
     free(clientConn);
     close(servSocket);
-    return NULL;
+    ans->status = -1;
+    ans->socket = NULL;
+    return ans;
   }
   printf("[+] Socket successfully bound to server address\n");
 
@@ -73,7 +91,9 @@ int *getServerSocket(char *ip) {
     perror("[-] Listening for incoming connection failed\n");
     free(clientConn);
     close(servSocket);
-    return NULL;
+    ans->status = -1;
+    ans->socket = NULL;
+    return ans;
   }
 
   char *message = "Listening for the connection";
@@ -83,7 +103,9 @@ int *getServerSocket(char *ip) {
   if (res.status != 0) {
     free(clientConn);
     close(servSocket);
-    return NULL;
+    ans->status = -1;
+    ans->socket = NULL;
+    return ans;
   }
 
   printf("[+] Listening for incoming connections\n");
@@ -96,10 +118,15 @@ int *getServerSocket(char *ip) {
     perror("[-] Client Accept failed\n");
     free(clientConn);
     close(servSocket);
-    return NULL;
+    ans->status = -1;
+    ans->socket = NULL;
+    return ans;
   }
 
   printf("[+] Client accepted\n");
 
-  return clientConn;
+  ans->socket = clientConn;
+  ans->status = 0;
+
+  return ans;
 }

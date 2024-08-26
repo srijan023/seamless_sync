@@ -15,7 +15,9 @@
  * char* ip (ip address of the server we wish to connect)
  *
  * Returns:
- *  returns the pointer to the client socket
+ *  returns the pointer of socket info
+ *  if the status is 0 it means that the socket for the connection is received
+ *  if the status is -1 it means something went wrong.
  *
  * Side Effects:
  *  NONE
@@ -29,9 +31,13 @@
  *
  * Notes:
  *  check out the client.c file in archive for further insight
+ *  check out customDataTypes
  */
 
-int *getClientSocket(char *ip) {
+struct socketInfo *getClientSocket(char *ip) {
+  struct socketInfo *ans;
+  memset(ans->pub_key, '\0', sizeof(ans->pub_key));
+
   int *clientSocket = (int *)malloc(sizeof(int));
 
   struct sockaddr_in server;
@@ -44,7 +50,9 @@ int *getClientSocket(char *ip) {
   if (clientSocket < 0) {
     perror("[-] Socket could not be created\n");
     free(clientSocket);
-    return NULL;
+    ans->status = -1;
+    ans->socket = NULL;
+    return ans;
   }
 
   if (setsockopt(*clientSocket, SOL_SOCKET, SO_REUSEADDR, &(int){1},
@@ -52,7 +60,9 @@ int *getClientSocket(char *ip) {
     printf("[-] Error while setting socket reuseable");
     close(*clientSocket);
     free(clientSocket);
-    return NULL;
+    ans->status = -1;
+    ans->socket = NULL;
+    return ans;
   }
 
   printf("[+] Socket created successfully\n");
@@ -69,11 +79,17 @@ int *getClientSocket(char *ip) {
     perror("[-] Connection failed\n");
     close(*clientSocket);
     free(clientSocket);
-    return NULL;
+    ans->status = -1;
+    ans->socket = NULL;
+    return ans;
   }
 
   printf("[+] Connected to ther server\n");
   printf("\n");
 
-  return clientSocket;
+  // TODO: insert the public key of peer here.
+  ans->socket = clientSocket;
+  ans->status = 0;
+
+  return ans;
 }
