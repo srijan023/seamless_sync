@@ -17,4 +17,10 @@ struct fileInfo {
   char name[50];
   long long size;
 };
+
+struct socketInfo {
+  int *socket;
+  int status;
+  char pub_key[50];
+};
 #endif
