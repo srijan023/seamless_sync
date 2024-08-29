@@ -3,6 +3,7 @@
 #include "createButton.h"
 #include "createVerticalBox.h"
 #include "createWrappedLabel.h"
+/*#include "customDataTypes.h"*/
 #include "glib-object.h"
 #include "glib.h"
 #include "gtk/gtkshortcut.h"
@@ -39,7 +40,7 @@ static void on_send_button_clicked(GtkButton *button, gpointer user_data) {
   GtkEntry *entry = GTK_ENTRY(user_data);
   const char *message_text = gtk_editable_get_text(GTK_EDITABLE(entry));
   if (g_strcmp0(message_text, "") != 0 && connSocket &&
-      *connSocket >= 0) { // Ensure message is not empty
+      connSocket >= 0) { // Ensure message is not empty
     add_message(message_text, TRUE);
     send(*connSocket, message_text, strlen(message_text), 0);
     add_message("From another side", FALSE);
@@ -50,7 +51,7 @@ static void on_send_button_clicked(GtkButton *button, gpointer user_data) {
 
 static void enter_clicked_on_entry(GtkEntry *entry, gpointer user_data) {
   const gchar *message_text = gtk_editable_get_text(GTK_EDITABLE(entry));
-  if (g_strcmp0(message_text, "") != 0 && connSocket && *connSocket >= 0) {
+  if (g_strcmp0(message_text, "") != 0 && connSocket && connSocket >= 0) {
     add_message(message_text, TRUE);
     send(*connSocket, message_text, strlen(message_text), 0);
     add_message("FROM ANOTHER SIDE WITH ENTER", FALSE);
@@ -80,16 +81,20 @@ void *receive_messages(gpointer data) {
 
 void *client_thread_func(gpointer data) {
   connSocket = getClientSocket(data);
-  if (connSocket && *connSocket >= 0) {
+  if (connSocket && connSocket >= 0) {
     g_thread_new("receive-messages", receive_messages, NULL);
   }
   return NULL;
 }
 
 void *server_thread_func(gpointer data) {
+  printf("Here");
   connSocket = getServerSocket(data);
 
-  if (connSocket && *connSocket >= 0) {
+  printf("%d", *connSocket);
+
+  printf("Receiving message");
+  if (connSocket && connSocket >= 0) {
     g_thread_new("receive-messages", receive_messages, NULL);
   }
   return NULL;
@@ -129,6 +134,7 @@ void demo_callback(GtkButton *button, gpointer data) {
   g_signal_connect(entry, "activate", G_CALLBACK(enter_clicked_on_entry), NULL);
 
   if (g_strcmp0(button_label, "Connect as Server") == 0) {
+    printf("Click button");
     g_thread_new("server-thread", server_thread_func, data);
     g_print("Connect as server clicked\n");
   } else if (g_strcmp0(button_label, "Connect as Receiver") == 0) {

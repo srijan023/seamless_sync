@@ -34,10 +34,7 @@
  *  check out customDataTypes
  */
 
-struct socketInfo *getClientSocket(char *ip) {
-  struct socketInfo *ans;
-  memset(ans->pub_key, '\0', sizeof(ans->pub_key));
-
+int *getClientSocket(char *ip) {
   int *clientSocket = (int *)malloc(sizeof(int));
 
   struct sockaddr_in server;
@@ -49,10 +46,7 @@ struct socketInfo *getClientSocket(char *ip) {
   *clientSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (clientSocket < 0) {
     perror("[-] Socket could not be created\n");
-    free(clientSocket);
-    ans->status = -1;
-    ans->socket = NULL;
-    return ans;
+    return NULL;
   }
 
   if (setsockopt(*clientSocket, SOL_SOCKET, SO_REUSEADDR, &(int){1},
@@ -60,36 +54,23 @@ struct socketInfo *getClientSocket(char *ip) {
     printf("[-] Error while setting socket reuseable");
     close(*clientSocket);
     free(clientSocket);
-    ans->status = -1;
-    ans->socket = NULL;
-    return ans;
+    return NULL;
   }
 
   printf("[+] Socket created successfully\n");
 
   struct customAddInfo message = listenUDP("12345", ip);
   if (message.status == 0) {
-    sleep(2);
+    sleep(3);
   }
-
-  char *res = "Ready to connect";
-  sendUDP(res, strlen(res), "12345", ip, 2.0);
 
   if (connect(*clientSocket, (struct sockaddr *)&server, sizeof(server)) != 0) {
     perror("[-] Connection failed\n");
-    close(*clientSocket);
-    free(clientSocket);
-    ans->status = -1;
-    ans->socket = NULL;
-    return ans;
+    return NULL;
   }
 
   printf("[+] Connected to ther server\n");
   printf("\n");
 
-  // TODO: insert the public key of peer here.
-  ans->socket = clientSocket;
-  ans->status = 0;
-
-  return ans;
+  return clientSocket;
 }

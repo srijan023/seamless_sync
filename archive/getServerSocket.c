@@ -38,11 +38,7 @@
  *  check out server.c file in archive for further insight.
  *  check out customDataTypes
  */
-struct socketInfo *getServerSocket(char *ip) {
-
-  struct socketInfo *ans;
-  memset(ans->pub_key, '\0', sizeof(ans->pub_key));
-
+int *getServerSocket(char *ip) {
   struct sockaddr_in servAddr, clientAddr;
   int servSocket;
 
@@ -51,20 +47,14 @@ struct socketInfo *getServerSocket(char *ip) {
   servSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (servSocket == -1) {
     perror("[-] Socket creation failed\n");
-    free(clientConn);
-    ans->status = -1;
-    ans->socket = NULL;
-    return ans;
+    return NULL;
   }
 
   if (setsockopt(servSocket, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) <
       0) {
     printf("[-] Error while setting socket reuseable");
     close(servSocket);
-    free(clientConn);
-    ans->status = -1;
-    ans->socket = NULL;
-    return ans;
+    return NULL;
   }
 
   printf("[+] socket create successfully\n");
@@ -77,11 +67,7 @@ struct socketInfo *getServerSocket(char *ip) {
 
   if (status != 0) {
     perror("[-] Binding to the socket failed");
-    free(clientConn);
-    close(servSocket);
-    ans->status = -1;
-    ans->socket = NULL;
-    return ans;
+    return NULL;
   }
   printf("[+] Socket successfully bound to server address\n");
 
@@ -89,24 +75,11 @@ struct socketInfo *getServerSocket(char *ip) {
 
   if (status != 0) {
     perror("[-] Listening for incoming connection failed\n");
-    free(clientConn);
-    close(servSocket);
-    ans->status = -1;
-    ans->socket = NULL;
-    return ans;
+    return NULL;
   }
 
   char *message = "Listening for the connection";
   sendUDP(message, strlen(message), "12345", ip, 3.0);
-
-  struct customAddInfo res = listenUDP("12345", ip);
-  if (res.status != 0) {
-    free(clientConn);
-    close(servSocket);
-    ans->status = -1;
-    ans->socket = NULL;
-    return ans;
-  }
 
   printf("[+] Listening for incoming connections\n");
 
@@ -116,17 +89,10 @@ struct socketInfo *getServerSocket(char *ip) {
 
   if (clientConn < 0) {
     perror("[-] Client Accept failed\n");
-    free(clientConn);
-    close(servSocket);
-    ans->status = -1;
-    ans->socket = NULL;
-    return ans;
+    return NULL;
   }
 
   printf("[+] Client accepted\n");
 
-  ans->socket = clientConn;
-  ans->status = 0;
-
-  return ans;
+  return clientConn;
 }
