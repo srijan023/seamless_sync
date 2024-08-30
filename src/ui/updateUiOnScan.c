@@ -1,8 +1,4 @@
-// #include "createHeaderBar.h"
-#include "createVerticalBox.h"
-#include "createWrappedLabel.h"
 #include "getMyIp.h"
-#include "gtk/gtk.h"
 #include "onDeviceListActivated.h"
 #include "uiCustomData.h"
 
@@ -11,9 +7,6 @@ static void update_ui_on_scan(gpointer user_data) {
   g_print("%d devices are found\n", data->result.size);
 
   GtkWidget *vertical_box_for_device_list = create_vertical_box(0, 0, 0, 0, 0);
-
-  // GtkWidget *header = create_header_bar();
-  // gtk_window_set_titlebar(GTK_WINDOW(data->window), header);
 
   GtkWidget *scrolled_window = gtk_scrolled_window_new();
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
@@ -34,16 +27,16 @@ static void update_ui_on_scan(gpointer user_data) {
   gtk_frame_set_child(GTK_FRAME(frame), scrolled_window);
 
   // for demo
-  const char *items[] = {"Apple", "Ball", "Cat"};
+  // const char *items[] = {"Apple", "Ball", "Cat"};
   // ,    "Dog", "Egg",   "Fish",
   // "Green",  "Hen",  "Ink",    "Jug", "King",  "Lion",
   // "Monkey", "Nest", "Orange", "Pen", "Queen", "Red"};
 
-  // for (int i = 0; i < data->result.size; i++) {
-  for (int i = 0; i < sizeof(items) / sizeof(items[i]); i++) {
+  for (int i = 0; i < data->result.size; i++) {
+    // for (int i = 0; i < sizeof(items) / sizeof(items[i]); i++) {
     GtkWidget *row = gtk_list_box_row_new();
-    // GtkWidget *label = create_wrapped_label(data->result.arr[i], 30);
-    GtkWidget *label = create_wrapped_label(items[i], 30);
+    GtkWidget *label = create_wrapped_label(data->result.arr[i], 30);
+    // GtkWidget *label = create_wrapped_label(items[i], 30);
     gtk_widget_set_name(GTK_WIDGET(row), data->result.arr[i]);
     gtk_widget_set_margin_top(label, 5);
     gtk_widget_set_margin_bottom(label, 5);

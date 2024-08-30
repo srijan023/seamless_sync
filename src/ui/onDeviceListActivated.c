@@ -1,10 +1,9 @@
 #include "../../archive/getClientSocket.c"
 #include "../../archive/getServerSocket.c"
+#include "../../archive/sendFile.c"
 #include "createButton.h"
 #include "createVerticalBox.h"
 #include "createWrappedLabel.h"
-/*#include "customDataTypes.h"*/
-#include "../../archive/sendFile.c"
 #include "gio/gio.h"
 #include "glib-object.h"
 #include "glib.h"
@@ -45,7 +44,6 @@ static void on_send_button_clicked(GtkButton *button, gpointer user_data) {
       connSocket >= 0) { // Ensure message is not empty
     add_message(message_text, TRUE);
     send(*connSocket, message_text, strlen(message_text), 0);
-    // add_message("From another side", FALSE);
     gtk_editable_set_text(GTK_EDITABLE(entry),
                           ""); // Clear the entry after sending
   }
@@ -56,7 +54,6 @@ static void enter_clicked_on_entry(GtkEntry *entry, gpointer user_data) {
   if (g_strcmp0(message_text, "") != 0 && connSocket && connSocket >= 0) {
     add_message(message_text, TRUE);
     send(*connSocket, message_text, strlen(message_text), 0);
-    // add_message("FROM ANOTHER SIDE WITH ENTER", FALSE);
     gtk_editable_set_text(GTK_EDITABLE(entry), "");
   }
 }
@@ -76,7 +73,7 @@ void *receive_messages(gpointer data) {
       printf("[-] Connection closed or error occurred\n");
       break;
     }
-    if (g_strcmp0(buffer, "/file")) {
+    if (g_strcmp0(buffer, "/file") == 0) {
       g_print("receiving file\n");
     }
     g_idle_add(update_ui_with_message, g_strdup(buffer));
@@ -114,7 +111,6 @@ static void on_open_file_response(GObject *source_object, GAsyncResult *res,
   if (file != NULL) {
     path = g_file_get_path(file);
     g_print("Selected file: %s", path);
-    // add_message("/file", TRUE);
     send(*connSocket, "/file", strlen("/file"), 0);
     g_print("sending file\n");
     // sendFile(connSocket, path);
