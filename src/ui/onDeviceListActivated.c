@@ -4,6 +4,8 @@
 #include "createVerticalBox.h"
 #include "createWrappedLabel.h"
 /*#include "customDataTypes.h"*/
+#include "../../archive/sendFile.c"
+#include "gio/gio.h"
 #include "glib-object.h"
 #include "glib.h"
 #include "gtk/gtkshortcut.h"
@@ -43,7 +45,7 @@ static void on_send_button_clicked(GtkButton *button, gpointer user_data) {
       connSocket >= 0) { // Ensure message is not empty
     add_message(message_text, TRUE);
     send(*connSocket, message_text, strlen(message_text), 0);
-    add_message("From another side", FALSE);
+    // add_message("From another side", FALSE);
     gtk_editable_set_text(GTK_EDITABLE(entry),
                           ""); // Clear the entry after sending
   }
@@ -54,7 +56,7 @@ static void enter_clicked_on_entry(GtkEntry *entry, gpointer user_data) {
   if (g_strcmp0(message_text, "") != 0 && connSocket && connSocket >= 0) {
     add_message(message_text, TRUE);
     send(*connSocket, message_text, strlen(message_text), 0);
-    add_message("FROM ANOTHER SIDE WITH ENTER", FALSE);
+    // add_message("FROM ANOTHER SIDE WITH ENTER", FALSE);
     gtk_editable_set_text(GTK_EDITABLE(entry), "");
   }
 }
@@ -69,10 +71,13 @@ void *receive_messages(gpointer data) {
   char buffer[256];
 
   while (1) {
-    memset(buffer, 0, sizeof(buffer));
+    memset(buffer, '\0', sizeof(buffer));
     if (recv(*connSocket, buffer, sizeof(buffer), 0) <= 0) {
       printf("[-] Connection closed or error occurred\n");
       break;
+    }
+    if (g_strcmp0(buffer, "/file")) {
+      g_print("receiving file\n");
     }
     g_idle_add(update_ui_with_message, g_strdup(buffer));
   }
@@ -100,6 +105,32 @@ void *server_thread_func(gpointer data) {
   return NULL;
 }
 
+static void on_open_file_response(GObject *source_object, GAsyncResult *res,
+                                  gpointer user_data) {
+  g_autoptr(GFile) file = NULL;
+  g_autofree char *path = NULL;
+
+  file = gtk_file_dialog_open_finish(GTK_FILE_DIALOG(source_object), res, NULL);
+  if (file != NULL) {
+    path = g_file_get_path(file);
+    g_print("Selected file: %s", path);
+    // add_message("/file", TRUE);
+    send(*connSocket, "/file", strlen("/file"), 0);
+    g_print("sending file\n");
+    // sendFile(connSocket, path);
+  } else {
+    g_print("No file selected\n");
+  }
+}
+
+static void on_file_button_clicked(GtkButton *button, gpointer data) {
+  GtkWindow *window =
+      GTK_WINDOW(gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_WINDOW));
+  g_print("file button clicked\n");
+  GtkFileDialog *dialog = gtk_file_dialog_new();
+  gtk_file_dialog_open(dialog, window, NULL, on_open_file_response, NULL);
+}
+
 void demo_callback(GtkButton *button, gpointer data) {
   const gchar *button_label = gtk_button_get_label(button);
   GtkWindow *window =
@@ -125,6 +156,12 @@ void demo_callback(GtkButton *button, gpointer data) {
   GtkWidget *entry = gtk_entry_new();
   gtk_widget_set_hexpand(entry, TRUE);
   gtk_box_append(GTK_BOX(hbox), entry);
+
+  GtkWidget *file_button = gtk_button_new_with_label("File");
+  gtk_box_append(GTK_BOX(hbox), file_button);
+
+  g_signal_connect(file_button, "clicked", G_CALLBACK(on_file_button_clicked),
+                   NULL);
 
   GtkWidget *send_button = gtk_button_new_with_label("Send");
   gtk_box_append(GTK_BOX(hbox), send_button);

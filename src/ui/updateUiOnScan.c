@@ -39,7 +39,7 @@ static void update_ui_on_scan(gpointer user_data) {
   // "Green",  "Hen",  "Ink",    "Jug", "King",  "Lion",
   // "Monkey", "Nest", "Orange", "Pen", "Queen", "Red"};
 
-  /*for (int i = 0; i < data->result.size; i++) {*/
+  // for (int i = 0; i < data->result.size; i++) {
   for (int i = 0; i < sizeof(items) / sizeof(items[i]); i++) {
     GtkWidget *row = gtk_list_box_row_new();
     // GtkWidget *label = create_wrapped_label(data->result.arr[i], 30);
