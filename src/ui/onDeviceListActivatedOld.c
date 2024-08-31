@@ -16,10 +16,13 @@
 
 int *connSocket = NULL; // global socket file descriptor
 GtkWidget *vbox;
+GtkWidget *scrolled_window;
 
 void add_message(const gchar *message_text, gboolean is_user_message) {
   GtkWidget *msg = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 20);
   gtk_widget_set_hexpand(msg, FALSE);
+  gtk_widget_set_valign(msg, GTK_ALIGN_END);
+  gtk_widget_set_margin_bottom(msg, 10);
 
   GtkWidget *message_label = gtk_label_new(message_text);
   gtk_label_set_justify(GTK_LABEL(message_label), GTK_JUSTIFY_CENTER);
@@ -36,27 +39,31 @@ void add_message(const gchar *message_text, gboolean is_user_message) {
     gtk_widget_set_margin_start(msg, 10);
   }
   gtk_box_append(GTK_BOX(vbox), msg);
+  GtkAdjustment *adjustment =
+      gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
+  gtk_adjustment_set_value(adjustment,
+                           gtk_adjustment_get_upper(adjustment) - 100);
 }
 
 static void on_send_button_clicked(GtkButton *button, gpointer user_data) {
   GtkEntry *entry = GTK_ENTRY(user_data);
   const char *message_text = gtk_editable_get_text(GTK_EDITABLE(entry));
-  if (g_strcmp0(message_text, "") != 0 && connSocket &&
-      connSocket >= 0) { // Ensure message is not empty
-    add_message(message_text, TRUE);
-    send(*connSocket, message_text, strlen(message_text), 0);
-    gtk_editable_set_text(GTK_EDITABLE(entry),
-                          ""); // Clear the entry after sending
-  }
+  // if (g_strcmp0(message_text, "") != 0 && connSocket &&
+  // connSocket >= 0) { // Ensure message is not empty
+  add_message(message_text, TRUE);
+  // send(*connSocket, message_text, strlen(message_text), 0);
+  gtk_editable_set_text(GTK_EDITABLE(entry),
+                        ""); // Clear the entry after sending
+  // }
 }
 
 static void enter_clicked_on_entry(GtkEntry *entry, gpointer user_data) {
   const gchar *message_text = gtk_editable_get_text(GTK_EDITABLE(entry));
-  if (g_strcmp0(message_text, "") != 0 && connSocket && connSocket >= 0) {
-    add_message(message_text, TRUE);
-    send(*connSocket, message_text, strlen(message_text), 0);
-    gtk_editable_set_text(GTK_EDITABLE(entry), "");
-  }
+  // if (g_strcmp0(message_text, "") != 0 && connSocket && connSocket >= 0) {
+  add_message(message_text, TRUE);
+  // send(*connSocket, message_text, strlen(message_text), 0);
+  gtk_editable_set_text(GTK_EDITABLE(entry), "");
+  // }
 }
 
 gboolean update_ui_with_message(gpointer data) {
@@ -117,9 +124,9 @@ static void on_open_file_response(GObject *source_object, GAsyncResult *res,
   if (file != NULL) {
     path = g_file_get_path(file);
     g_print("Selected file: %s\n", path);
-    send(*connSocket, "/file", strlen("/file"), 0);
+    // send(*connSocket, "/file", strlen("/file"), 0);
     g_print("sending file\n");
-    sendFile(connSocket, path);
+    // sendFile(connSocket, path);
   } else {
     g_print("No file selected\n");
   }
@@ -131,6 +138,12 @@ static void on_file_button_clicked(GtkButton *button, gpointer data) {
   g_print("file button clicked\n");
   GtkFileDialog *dialog = gtk_file_dialog_new();
   gtk_file_dialog_open(dialog, window, NULL, on_open_file_response, NULL);
+}
+
+void scroll_to_bottom(GtkAdjustment *adjustment, gpointer user_data) {
+  gtk_adjustment_set_value(adjustment,
+                           gtk_adjustment_get_upper(adjustment) -
+                               gtk_adjustment_get_page_size(adjustment));
 }
 
 void demo_callback(GtkButton *button, gpointer data) {
@@ -149,7 +162,12 @@ void demo_callback(GtkButton *button, gpointer data) {
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
   gtk_widget_set_vexpand(vbox, TRUE);
-  gtk_box_append(GTK_BOX(msgArea), vbox);
+
+  scrolled_window = gtk_scrolled_window_new();
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+                                 GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), vbox);
+  gtk_box_append(GTK_BOX(msgArea), scrolled_window);
 
   GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 20);
   gtk_box_append(GTK_BOX(msgArea), hbox);

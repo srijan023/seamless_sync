@@ -44,6 +44,7 @@ static void on_open_file_response(GObject *source_object, GAsyncResult *res,
     send(*connSocket, "/file", strlen("/file"), 0);
     g_print("sending file\n");
     sendFile(connSocket, path);
+    add_message(g_strconcat(path, " is sent.", NULL), TRUE);
   } else {
     g_print("No file selected\n");
   }
