@@ -9,8 +9,6 @@ typedef struct {
 typedef struct {
   struct ssdpMessage result;
   GtkWindow *window;
-  GtkWidget *spinner;
-  GtkWidget *spin_label;
 } UiUpdateData;
 
 typedef struct {
