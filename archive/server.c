@@ -6,6 +6,7 @@
 
 int main() {
   int *connSocket = getServerSocket("192.168.88.56");
+  char file_name[100];
 
   int continueSending = 1;
   char buffer[256];
@@ -19,7 +20,7 @@ int main() {
     }
     if (strncmp(buffer, "/file", 5) == 0) {
       printf("[+] Receiving files\n");
-      receiveFile(connSocket);
+      receiveFile(connSocket, file_name);
     }
     memset(buffer, '\0', sizeof(buffer));
     if (continueSending) {

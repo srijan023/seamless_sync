@@ -1,4 +1,4 @@
-#ifndef ONSIDEBARITEMSELECTED_H
-#define ONSIDEBARITEMSELECTED_H
+#ifndef ONDEVICELISTACTIVATEDNEW_H
+#define ONDEVICELISTACTIVATEDNEW_H
 #include "../src/ui/onDeviceListActivated.c"
 #endif
