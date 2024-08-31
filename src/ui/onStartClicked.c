@@ -20,6 +20,7 @@ void on_start_clicked(GtkButton *button, gpointer data) {
   g_print("Network status data is freed from the memory.\n");
 
   GtkWidget *vertical_box_for_spinner = create_vertical_box(0, 0, 0, 0, 0);
+  gtk_window_set_child(window, vertical_box_for_spinner);
 
   GtkWidget *spinner = gtk_spinner_new();
   gtk_widget_set_size_request(GTK_WIDGET(spinner), 50, 50);
@@ -38,8 +39,6 @@ void on_start_clicked(GtkButton *button, gpointer data) {
   thread_data->timer = 30.0;
   GThread *join_ssdp_thread = g_thread_new("join_ssdp", joinSSDP, thread_data);
   g_thread_unref(join_ssdp_thread);
-
-  gtk_window_set_child(window, vertical_box_for_spinner);
 
   ui_data->window = window;
 }

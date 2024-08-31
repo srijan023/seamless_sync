@@ -1,9 +1,10 @@
 #include "SSDPListenerConnection.h"
-#include "uiCustomData.h"
+#include <gtk/gtk.h>
+// #include "uiCustomData.h"
 
 static void run_ssdp_scan(GTask *task, gpointer source_object, gpointer data,
                           GCancellable *cancellable) {
-  UiUpdateData *ui_data = (UiUpdateData *)data;
+  // UiUpdateData *ui_data = (UiUpdateData *)data;
 
   struct ssdpMessage *revMsg = SSDPListen(5);
   g_print("Run ssdp listen function\n");
