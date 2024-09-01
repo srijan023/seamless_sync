@@ -41,10 +41,12 @@ static void on_open_file_response(GObject *source_object, GAsyncResult *res,
   file = gtk_file_dialog_open_finish(GTK_FILE_DIALOG(source_object), res, NULL);
   if (file != NULL) {
     path = g_file_get_path(file);
-    send(*connSocket, "/file", strlen("/file"), 0);
+    char *fileMsg = "/file";
+    send(*connSocket, fileMsg, strlen(fileMsg), 0);
     g_print("sending file\n");
-    sendFile(connSocket, path);
-    add_message(g_strconcat(path, " is sent.", NULL), TRUE);
+    // sendFile(connSocket, path);
+    // add_message(g_strconcat(path, " is sent.", NULL), TRUE);
+    add_message("/file", TRUE);
   } else {
     g_print("No file selected\n");
   }
@@ -127,11 +129,13 @@ void *receive_messages(gpointer data) {
     }
     if (g_strcmp0(buffer, "/file") == 0) {
       g_print("receiving file\n");
-      char file_name[100];
-      receiveFile(connSocket, file_name);
-      g_idle_add(update_ui_with_message,
-                 g_strconcat(file_name, " is received.", NULL));
+      g_idle_add(update_ui_with_message, buffer);
+      // char file_name[100];
+      // receiveFile(connSocket);
+      // g_idle_add(update_ui_with_message,
+      // g_strconcat("file is received.", NULL));
     } else {
+      // g_print("Hello world error");
       g_idle_add(update_ui_with_message, g_strdup(buffer));
     }
   }

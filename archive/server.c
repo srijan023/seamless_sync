@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 int main() {
-  int *connSocket = getServerSocket("192.168.88.56");
+  int *connSocket = getServerSocket("192.168.176.58");
   char file_name[100];
 
   int continueSending = 1;
@@ -20,7 +20,7 @@ int main() {
     }
     if (strncmp(buffer, "/file", 5) == 0) {
       printf("[+] Receiving files\n");
-      receiveFile(connSocket, file_name);
+      receiveFile(connSocket);
     }
     memset(buffer, '\0', sizeof(buffer));
     if (continueSending) {
