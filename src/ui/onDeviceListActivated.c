@@ -35,18 +35,18 @@ void add_message(const gchar *message_text, gboolean is_user_message) {
 
 static void on_open_file_response(GObject *source_object, GAsyncResult *res,
                                   gpointer user_data) {
+  char *fileMsg = "/file";
+  send(*connSocket, fileMsg, strlen(fileMsg), 0);
   g_autoptr(GFile) file = NULL;
   g_autofree char *path = NULL;
 
   file = gtk_file_dialog_open_finish(GTK_FILE_DIALOG(source_object), res, NULL);
   if (file != NULL) {
     path = g_file_get_path(file);
-    char *fileMsg = "/file";
-    send(*connSocket, fileMsg, strlen(fileMsg), 0);
     g_print("sending file\n");
-    // sendFile(connSocket, path);
-    // add_message(g_strconcat(path, " is sent.", NULL), TRUE);
-    add_message("/file", TRUE);
+    sendFile(connSocket, path);
+    add_message(g_strconcat(path, " is sent.", NULL), TRUE);
+    // add_message("/file", TRUE);
   } else {
     g_print("No file selected\n");
   }
@@ -120,16 +120,39 @@ gboolean update_ui_with_message(gpointer data) {
 
 void *receive_messages(gpointer data) {
   char buffer[256];
+  gboolean expecting_file = FALSE;
 
   while (1) {
     memset(buffer, '\0', sizeof(buffer));
+    ssize_t recv_len = recv(*connSocket, buffer, sizeof(buffer), 0);
+
+    if (recv_len <= 0) {
+      if (recv_len == 0) {
+        printf("[-] Connection closed by peer\n");
+      } else {
+        perror("[-] recv error");
+      }
+      break;
+    }
+
+    if (expecting_file) {
+      g_print("Reciving file\n");
+      receiveFile(connSocket);
+      g_idle_add(update_ui_with_message, g_strdup("file is received"));
+      expecting_file = FALSE;
+    } else if (g_strcmp0(buffer, "/file") == 0) {
+      expecting_file = TRUE;
+    } else {
+      g_idle_add(update_ui_with_message, g_strdup(buffer));
+    }
+
     if (recv(*connSocket, buffer, sizeof(buffer), 0) <= 0) {
       printf("[-] Connection closed or error occurred\n");
       break;
     }
-    if (g_strcmp0(buffer, "/file") == 0) {
+    /* if (g_strcmp0(buffer, "/file") == 0) {
       g_print("receiving file\n");
-      g_idle_add(update_ui_with_message, buffer);
+      g_idle_add(update_ui_with_message, g_strdup(buffer));
       // char file_name[100];
       // receiveFile(connSocket);
       // g_idle_add(update_ui_with_message,
@@ -137,7 +160,7 @@ void *receive_messages(gpointer data) {
     } else {
       // g_print("Hello world error");
       g_idle_add(update_ui_with_message, g_strdup(buffer));
-    }
+    } */
   }
   return NULL;
 }
