@@ -36,9 +36,9 @@ void add_message(const gchar *message_text, gboolean is_user_message) {
 static void on_open_file_response(GObject *source_object, GAsyncResult *res,
                                   gpointer user_data) {
   char fileMsg[256];
-  memset(fileMsg, '\0', 256);
+  memset(fileMsg, '\0', sizeof(fileMsg));
   strncpy(fileMsg, "/file", 5);
-  send(*connSocket, fileMsg, strlen(fileMsg), 0);
+  send(*connSocket, fileMsg, sizeof(fileMsg), 0);
   g_autoptr(GFile) file = NULL;
   g_autofree char *path = NULL;
 
@@ -48,7 +48,6 @@ static void on_open_file_response(GObject *source_object, GAsyncResult *res,
     g_print("sending file\n");
     sendFile(connSocket, path);
     add_message(g_strconcat(path, " is sent.", NULL), TRUE);
-    // add_message("/file", TRUE);
   } else {
     g_print("No file selected\n");
   }
@@ -139,14 +138,10 @@ void *receive_messages(gpointer data) {
     }
 
     if (strncmp(receiveBuffer, "/file", 5) == 0) {
-      // memset(receiveBuffer, '\0', sizeof(receiveBuffer));
-      // g_print("receiving file\n");
-      // add_message("receiving file", TRUE);
-      g_idle_add(update_ui_with_message, g_strdup(receiveBuffer));
-      // char file_name[100];
-      receiveFile(connSocket);
+      char file_name[100];
+      receiveFile(connSocket, file_name);
       g_idle_add(update_ui_with_message,
-                 g_strconcat("file is received.", NULL));
+                 g_strconcat(file_name, "file is received.", NULL));
     } else {
       // g_print("Hello world error");
       g_idle_add(update_ui_with_message, g_strdup(receiveBuffer));

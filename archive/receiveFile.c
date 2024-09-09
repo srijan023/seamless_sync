@@ -5,8 +5,7 @@
 
 #define BUFSIZE 1024
 
-void receiveFile(int *client_sock) {
-  char file_name[100];
+void receiveFile(int *client_sock, char *file_name) {
   struct fileInfo fi;
   recv(*client_sock, &fi, sizeof(fi), 0);
   printf("%s", fi.name);
