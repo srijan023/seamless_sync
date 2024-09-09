@@ -143,8 +143,8 @@ void *receive_messages(gpointer data) {
       g_idle_add(update_ui_with_message, g_strdup(receiveBuffer));
       // char file_name[100];
       receiveFile(connSocket);
-      // g_idle_add(update_ui_with_message,
-      // g_strconcat("file is received.", NULL));
+      g_idle_add(update_ui_with_message,
+                 g_strconcat("file is received.", NULL));
     } else {
       // g_print("Hello world error");
       g_idle_add(update_ui_with_message, g_strdup(receiveBuffer));
