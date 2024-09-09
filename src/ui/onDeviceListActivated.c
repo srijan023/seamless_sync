@@ -119,12 +119,13 @@ gboolean update_ui_with_message(gpointer data) {
 }
 
 void *receive_messages(gpointer data) {
-  char buffer[256];
+  char receiveBuffer[256];
   gboolean expecting_file = FALSE;
 
   while (1) {
-    memset(buffer, '\0', sizeof(buffer));
-    ssize_t recv_len = recv(*connSocket, buffer, sizeof(buffer), 0);
+    memset(receiveBuffer, '\0', sizeof(receiveBuffer));
+    ssize_t recv_len =
+        recv(*connSocket, receiveBuffer, sizeof(receiveBuffer), 0);
 
     if (recv_len <= 0) {
       if (recv_len == 0) {
@@ -135,16 +136,18 @@ void *receive_messages(gpointer data) {
       break;
     }
 
-    if (strncmp(buffer, "/file", 5)) {
-      g_print("receiving file\n");
-      g_idle_add(update_ui_with_message, g_strdup(buffer));
+    if (strncmp(receiveBuffer, "/file", 5) == 0) {
+      // memset(receiveBuffer, '\0', sizeof(receiveBuffer));
+      // g_print("receiving file\n");
+      // add_message("receiving file", TRUE);
+      g_idle_add(update_ui_with_message, g_strdup(receiveBuffer));
       // char file_name[100];
       receiveFile(connSocket);
       // g_idle_add(update_ui_with_message,
       // g_strconcat("file is received.", NULL));
     } else {
       // g_print("Hello world error");
-      g_idle_add(update_ui_with_message, g_strdup(buffer));
+      g_idle_add(update_ui_with_message, g_strdup(receiveBuffer));
     }
   }
   return NULL;
@@ -158,6 +161,7 @@ static void client_thread_func(GTask *task, gpointer source_object,
   }
   if (connSocket && connSocket >= 0) {
     g_thread_new("receive-messages", receive_messages, NULL);
+    // receive_messages(NULL);
   }
 }
 
@@ -169,6 +173,7 @@ static void server_thread_func(GTask *task, gpointer source_object,
   }
   if (connSocket && connSocket >= 0) {
     g_thread_new("receive-messages", receive_messages, NULL);
+    // receive_messages(NULL);
   }
 }
 

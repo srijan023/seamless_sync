@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 int main() {
-  int *connSocket = getServerSocket("192.168.176.58");
+  int *connSocket = getServerSocket("192.168.176.74");
   char file_name[100];
 
   int continueSending = 1;

@@ -84,7 +84,7 @@ void *receive_messages(gpointer data) {
     if (g_strcmp0(buffer, "/file") == 0) {
       g_print("receiving file\n");
       char file_name[100];
-      receiveFile(connSocket, file_name);
+      receiveFile(connSocket);
       g_idle_add(update_ui_with_message,
                  g_strconcat(file_name, " is received.", NULL));
 

@@ -1,5 +1,6 @@
 #include "getMyIp.h"
 #include "onDeviceListActivated.h"
+// #include "onDeviceListActivatedOld.h"
 #include "uiCustomData.h"
 
 static void update_ui_on_scan(gpointer user_data) {
