@@ -135,32 +135,17 @@ void *receive_messages(gpointer data) {
       break;
     }
 
-    if (expecting_file) {
-      g_print("Reciving file\n");
-      receiveFile(connSocket);
-      g_idle_add(update_ui_with_message, g_strdup("file is received"));
-      expecting_file = FALSE;
-    } else if (g_strcmp0(buffer, "/file") == 0) {
-      expecting_file = TRUE;
-    } else {
-      g_idle_add(update_ui_with_message, g_strdup(buffer));
-    }
-
-    if (recv(*connSocket, buffer, sizeof(buffer), 0) <= 0) {
-      printf("[-] Connection closed or error occurred\n");
-      break;
-    }
-    /* if (g_strcmp0(buffer, "/file") == 0) {
+    if (strncmp(buffer, "/file", 5)) {
       g_print("receiving file\n");
       g_idle_add(update_ui_with_message, g_strdup(buffer));
       // char file_name[100];
-      // receiveFile(connSocket);
+      receiveFile(connSocket);
       // g_idle_add(update_ui_with_message,
       // g_strconcat("file is received.", NULL));
     } else {
       // g_print("Hello world error");
       g_idle_add(update_ui_with_message, g_strdup(buffer));
-    } */
+    }
   }
   return NULL;
 }
