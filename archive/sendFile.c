@@ -1,7 +1,7 @@
 #include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
 
-#define BUFSIZE 1024 * 8
+#define BUFSIZE 1024
 
 void sendFile(int *client_sock, char *file_path) {
   FILE *fp = fopen(file_path, "rb");
@@ -36,24 +36,23 @@ void sendFile(int *client_sock, char *file_path) {
   // sending the file information to the receiver
   send(*client_sock, &fi, sizeof(fi), 0);
 
-  // char buffer[BUFSIZE];
-  //
-  // int n;
-  //
-  // // send file
-  // while (file_size > 0) {
-  //   n = fread(buffer, 1, BUFSIZE, fp);
-  //   if (n < BUFSIZE) {
-  //     // padding the sending message such that the entire buffer is filled
-  //     every
-  //     // single time.
-  //     memset(buffer + n, 0, BUFSIZE - n);
-  //   }
-  //   file_size -= n;
-  //   send(*client_sock, buffer, n, 0);
-  // }
-  //
-  // fclose(fp);
+  char buffer[BUFSIZE];
+
+  int n;
+
+  // send file
+  while (file_size > 0) {
+    n = fread(buffer, 1, BUFSIZE, fp);
+    if (n < BUFSIZE) {
+      // padding the sending message such that the entire buffer is filled every
+      // single time.
+      memset(buffer + n, 0, BUFSIZE - n);
+    }
+    file_size -= n;
+    send(*client_sock, buffer, n, 0);
+  }
+
+  fclose(fp);
 
   return;
 }
