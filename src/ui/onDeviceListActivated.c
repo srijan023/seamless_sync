@@ -1,10 +1,10 @@
-#include "../../archive/getClientSocket.c"
-#include "../../archive/getServerSocket.c"
-#include "../../archive/receiveFile.c"
-#include "../../archive/sendFile.c"
 #include "createButton.h"
 #include "createVerticalBox.h"
 #include "createWrappedLabel.h"
+#include "getClientSocket.h"
+#include "getServerSocket.h"
+#include "receiveFile.h"
+#include "sendFile.h"
 
 int *connSocket = NULL; // global socket file descriptor
 GtkWindow *window;

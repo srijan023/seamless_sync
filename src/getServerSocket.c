@@ -1,5 +1,5 @@
-#include "../include/UDPSend.h"
-#include "../src/headerConfig.c"
+#include "UDPSend.h"
+#include "headerConfig.c"
 
 /**
  * Function: getServerSocket
