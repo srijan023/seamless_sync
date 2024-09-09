@@ -33,6 +33,10 @@ void sendFile(int *client_sock, char *file_path) {
   fi.size = file_size;
   strcpy(fi.name, file_name);
 
+  printf("remaining size: %lld\n", fi.size);
+  printf("File name is %s\n", fi.name);
+  printf("File type is %c\n", fi.type);
+
   // sending the file information to the receiver
   send(*client_sock, &fi, sizeof(fi), 0);
 

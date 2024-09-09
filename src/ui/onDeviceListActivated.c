@@ -35,7 +35,9 @@ void add_message(const gchar *message_text, gboolean is_user_message) {
 
 static void on_open_file_response(GObject *source_object, GAsyncResult *res,
                                   gpointer user_data) {
-  char *fileMsg = "/file";
+  char fileMsg[256];
+  memset(fileMsg, '\0', 256);
+  strncpy(fileMsg, "/file", 5);
   send(*connSocket, fileMsg, strlen(fileMsg), 0);
   g_autoptr(GFile) file = NULL;
   g_autofree char *path = NULL;
