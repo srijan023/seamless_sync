@@ -1,9 +1,6 @@
 #include "../include/UDPListen.h"
-#include "../include/UDPSend.h"
 #include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
-#include <sys/socket.h>
-#include <unistd.h>
 
 /**
  * Function: getclientSocket

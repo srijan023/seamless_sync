@@ -5,8 +5,6 @@
 #include "createButton.h"
 #include "createVerticalBox.h"
 #include "createWrappedLabel.h"
-#include "glib-object.h"
-#include "glib.h"
 
 int *connSocket = NULL; // global socket file descriptor
 GtkWindow *window;
@@ -141,7 +139,7 @@ void *receive_messages(gpointer data) {
       char file_name[100];
       receiveFile(connSocket, file_name);
       g_idle_add(update_ui_with_message,
-                 g_strconcat(file_name, "file is received.", NULL));
+                 g_strconcat(file_name, " file is received.", NULL));
     } else {
       // g_print("Hello world error");
       g_idle_add(update_ui_with_message, g_strdup(receiveBuffer));

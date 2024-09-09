@@ -2,10 +2,6 @@
 #include "../include/customDataTypes.h"
 #include "../include/getMyIp.h"
 #include "../src/headerConfig.c"
-// #include <ctime>
-// #include <cstdlib>
-#include <pthread.h>
-#include <sys/socket.h>
 
 int isPresent(char **arr, char *key, int size) {
   for (int i = 0; i < size; i++) {

@@ -1,6 +1,5 @@
 #include "SSDPListenerConnection.h"
 #include <gtk/gtk.h>
-// #include "uiCustomData.h"
 
 static void run_ssdp_scan(GTask *task, gpointer source_object, gpointer data,
                           GCancellable *cancellable) {

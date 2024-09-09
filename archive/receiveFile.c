@@ -1,7 +1,5 @@
 #include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
-#include <stdio.h>
-#include <string.h>
 
 #define BUFSIZE 1024
 
