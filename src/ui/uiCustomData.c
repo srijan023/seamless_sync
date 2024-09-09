@@ -7,15 +7,11 @@ typedef struct {
 } NetworkStatusData;
 
 typedef struct {
-  GtkWidget *v_box;
   struct ssdpMessage result;
-  GtkWidget *spinner;
-  GtkWidget *label_horizontal_box;
-  GtkWidget *spin_label;
+  GtkWindow *window;
 } UiUpdateData;
 
 typedef struct {
-  GtkWidget *window;
   guint timeout_id;
   NetworkStatusData *free_data;
 } StartData;

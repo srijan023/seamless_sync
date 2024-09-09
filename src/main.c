@@ -1,5 +1,5 @@
 #include "activate.h"
-#include "gio/gio.h"
+#include "gtk/gtk.h"
 
 int main(int argc, char **argv) {
   GtkApplication *app;

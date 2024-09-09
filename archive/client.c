@@ -3,7 +3,7 @@
 #include "./sendFile.c"
 
 int main() {
-  int *connSocket = getClientSocket("192.168.88.56");
+  int *connSocket = getClientSocket("192.168.88.18");
 
   int continueCommunication = 1;
   char buffer[256];

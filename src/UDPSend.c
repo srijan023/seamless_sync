@@ -1,7 +1,4 @@
 #include "../include/UDPErrorHandle.h"
-#include "../include/customDataTypes.h"
-#include "headerConfig.c"
-#include <time.h>
 
 struct customAddInfo sendUDP(char *msg, int msgLength, char *port, char *ip,
                              long sendTimeOut) {
@@ -43,30 +40,6 @@ struct customAddInfo sendUDP(char *msg, int msgLength, char *port, char *ip,
     if (elapsed_time >= duration) {
       break;
     }
-
-    // fd_set sock_fds;
-    // struct timeval timeout;
-    //
-    // FD_ZERO(&sock_fds);
-    // FD_SET(sockfd, &sock_fds);
-    //
-    // timeout.tv_sec = 5;
-    // timeout.tv_usec = 0;
-    //
-    // int activity = select(sockfd + 1, &sock_fds, NULL, NULL, &timeout);
-    //
-    // if (activity < 0) {
-    //   handleUDPError("Select error", &returnMessage);
-    //   close(sockfd);
-    //   return returnMessage;
-    // } else if (activity == 0) {
-    //   strcpy(returnMessage.message, "Timeout: 5 seconds passed");
-    //   returnMessage.status = 0;
-    //   break;
-    // }
-    //
-    // if (FD_ISSET(sockfd, &sock_fds)) {
-
     status = sendto(sockfd, msg, msgLength, 0, (struct sockaddr *)&dest_addr,
                     sizeof(dest_addr));
     if (status == -1) {
@@ -78,7 +51,6 @@ struct customAddInfo sendUDP(char *msg, int msgLength, char *port, char *ip,
       close(sockfd);
 #endif
       return returnMessage;
-      // }
     };
   }
 
