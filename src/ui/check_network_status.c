@@ -5,7 +5,7 @@ gboolean check_network_status(gpointer user_data) {
 
   NetworkStatusData *app_data = (NetworkStatusData *)user_data;
 
-  g_print("Running check network status.\n");
+  g_print("[.] Running check network status.\n");
   if (findMyIP().status != -1) {
     gtk_label_set_text(GTK_LABEL(app_data->label),
                        "You are ready to start the SSDP Listener. Please click "

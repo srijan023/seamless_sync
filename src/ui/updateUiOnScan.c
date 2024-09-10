@@ -5,7 +5,7 @@
 static void update_ui_on_scan(gpointer user_data) {
   UiUpdateData *data = (UiUpdateData *)user_data;
 
-  g_print("%d devices are found\n", data->result.size);
+  g_print("[.] %d devices are found\n", data->result.size);
   GtkWidget *vertical_box_for_device_list = create_vertical_box(0, 0, 0, 0, 0);
   gtk_window_set_child(data->window, vertical_box_for_device_list);
 

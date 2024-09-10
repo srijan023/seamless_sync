@@ -52,18 +52,18 @@ static void on_open_file_response(GObject *source_object, GAsyncResult *res,
   file = gtk_file_dialog_open_finish(GTK_FILE_DIALOG(source_object), res, NULL);
   if (file != NULL) {
     path = g_file_get_path(file);
-    g_print("sending file\n");
+    g_print("[+] Sending file\n");
     sendFile(connSocket, path);
     add_message(g_strconcat(path, " file is sent.", NULL), TRUE);
   } else {
-    g_print("No file selected\n");
+    g_print("[-] No file selected\n");
   }
 }
 
 static void on_file_button_clicked(GtkButton *button, gpointer data) {
   GtkWindow *window =
       GTK_WINDOW(gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_WINDOW));
-  g_print("file button clicked\n");
+  g_print("[.] File button clicked\n");
   GtkFileDialog *dialog = gtk_file_dialog_new();
   gtk_file_dialog_open(dialog, window, NULL, on_open_file_response, NULL);
 }
@@ -196,11 +196,11 @@ void button_callback(GtkButton *button, gpointer data) {
   if (g_strcmp0(button_label, "Connect as Server") == 0) {
     g_task_run_in_thread(task, server_thread_func);
     g_object_unref(task);
-    g_print("Connect as server clicked\n");
+    g_print("[.] Connect as server clicked\n");
   } else if (g_strcmp0(button_label, "Connect as Receiver") == 0) {
     g_task_run_in_thread(task, client_thread_func);
     g_object_unref(task);
-    g_print("Connect as receiver clicked\n");
+    g_print("[.] Connect as receiver clicked\n");
   }
 
   GtkWidget *vertical_box_for_spinner = create_vertical_box(0, 0, 0, 0, 0);

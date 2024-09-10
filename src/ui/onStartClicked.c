@@ -14,10 +14,9 @@ void on_start_clicked(GtkButton *button, gpointer data) {
   if (user_data->timeout_id > 0) {
     g_source_remove(user_data->timeout_id);
     user_data->timeout_id = 0;
-    g_print("Periodic(5s) network status check stopped\n");
+    g_print("[.] Periodic(5s) network status check stopped\n");
   }
   g_free(user_data->free_data);
-  g_print("Network status data is freed from the memory.\n");
 
   GtkWidget *vertical_box_for_spinner = create_vertical_box(0, 0, 0, 0, 0);
   gtk_window_set_child(window, vertical_box_for_spinner);

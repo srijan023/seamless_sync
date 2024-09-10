@@ -10,7 +10,7 @@ GtkWidget *create_main_window(GtkApplication *app) {
   GtkWidget *window = gtk_application_window_new(app);
   gtk_window_set_title(GTK_WINDOW(window), "Seamless Sync");
   gtk_window_set_default_size(GTK_WINDOW(window), 600, 700);
-  g_print("Window of 600x700 created\n");
+  g_print("[.] Window of 600x700 created\n");
 
   GtkWidget *main_vertical_box = create_vertical_box(10, 20, 20, 20, 20);
   GtkWidget *logo_image = create_image("../include/image.png", 200, 200);
@@ -24,14 +24,14 @@ GtkWidget *create_main_window(GtkApplication *app) {
   GtkWidget *info_label;
 
   if (findMyIP().status != -1) {
-    g_print("Device is connected to the network.\n");
+    g_print("[+] Device is connected to the network.\n");
     info_label = create_wrapped_label(
         "You are ready to start the SSDP Listener. Please click "
         "the 'Start' button below.",
         30);
     gtk_widget_set_sensitive(start_button, TRUE);
   } else {
-    g_print("Device is not connected to the network.\n");
+    g_print("[-] Device is not connected to the network.\n");
     info_label = create_wrapped_label(
         "Your device needs to be connected to any network before you proceed. "
         "Please check the network connection of your device",

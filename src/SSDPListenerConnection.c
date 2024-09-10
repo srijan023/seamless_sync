@@ -16,14 +16,13 @@ char **doubleArraySize(char **arr, int size, int *newSize) {
   *newSize = size * 2;
   char **newArr = realloc(arr, (*newSize) * sizeof(char *));
   if (newArr == NULL) {
-    perror("Failed to reallocate memory");
+    perror("[-] Failed to reallocate memory");
     exit(EXIT_FAILURE);
   }
   return newArr;
 }
 
 void *SSDPListen(long duration) {
-  printf("I am inside ssdp listen\n");
   struct customAddInfo myIp = findMyIP();
   struct ssdpMessage *msg =
       (struct ssdpMessage *)malloc(sizeof(struct ssdpMessage));
@@ -178,7 +177,7 @@ void *SSDPListen(long duration) {
           //
           // printf("Their keys are: %lld %lld\n", t_pub_e, t_pub_n);
 
-          printf("%s", msgBuffer);
+          // printf("%s", msgBuffer);
 
           strncpy(IpList[count], ip, 20);
           if (count == size - 1) {

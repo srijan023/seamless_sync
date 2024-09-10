@@ -12,7 +12,7 @@ void *joinSSDP(gpointer user_data) {
   char *PORT = "1900";
   char *IP = "239.255.255.250";
   char message[1024];
-  printf("I am sending: %lld, %lld", m_rsa_e, m_rsa_n);
+  // printf("I am sending: %lld, %lld", m_rsa_e, m_rsa_n);
   sprintf(message,
           "--------------------------M_SEARCH--------------------------\n"
           "M-SEARCH * HTTP/1.1\nuuid:%s\npub_e:%lld\npub_n:%lld\n"
