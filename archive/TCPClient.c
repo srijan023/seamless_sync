@@ -21,7 +21,7 @@ int main() {
     perror("[-] socket could not be created\n");
     return 1;
   }
-  printf("[+] Socket creted successfully\n");
+  printf("[+] Socket created successfully\n");
 
   if (connect(clientSocket, (struct sockaddr *)&server, sizeof(server)) != 0) {
     perror("[-] connect failed\n");

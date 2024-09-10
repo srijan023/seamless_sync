@@ -19,11 +19,11 @@
 //     }
 //     struct customAddInfo* SSDPThreadReply = malloc(sizeof(struct
 //     customAddInfo)); sprintf(SSDPThreadReply->message, "%d messages were
-//     receieved\n", count); SSDPThreadReply->status = 0; return
+//     received\n", count); SSDPThreadReply->status = 0; return
 //     SSDPThreadReply;
 // }
 
-// Listner handler
+// Listener handler
 int main() {
   pthread_t SSDPThread;
   int doLooping = 1;

@@ -19,8 +19,6 @@ void *joinSSDP(gpointer user_data) {
           "Man: ssdp:discover\nST: seamless:devices_all\nMX: 5",
           thread_data->myIp, m_rsa_e, m_rsa_n);
 
-  printf("%ld", sizeof(message));
-
   sendUDP(message, sizeof(message), PORT, IP, thread_data->timer);
 
   g_free(thread_data);

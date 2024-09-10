@@ -7,7 +7,7 @@
  * Takes in the ip address of the client we wish to connect, generates the
  * connection socket and give it back to you.
  * Under the hood it creates two socket one for the server and another for the
- * connection, the socket of server is used to listen to the incoming conneciton
+ * connection, the socket of server is used to listen to the incoming connection
  * connection requests are received across multiple interfaces
  * finally when the connection is setup, new connection socket is created which
  * is then returned.
@@ -48,7 +48,7 @@ int *getServerSocket(char *ip) {
 
   if (setsockopt(servSocket, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) <
       0) {
-    printf("[-] Error while setting socket reuseable");
+    printf("[-] Error while setting socket reusable");
     close(servSocket);
     return NULL;
   }

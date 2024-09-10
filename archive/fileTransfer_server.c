@@ -133,10 +133,10 @@ int main() {
     return -1;
   }
 
-  // making the socket reuseable
+  // making the socket reusable
   if (setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR, &(int){1},
                  sizeof(int)) < 0) {
-    printf("[-] Error while setting socket reuseable");
+    printf("[-] Error while setting socket reusable");
     close(server_sock);
     return -1;
   }
