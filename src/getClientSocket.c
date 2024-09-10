@@ -44,8 +44,6 @@ long long m_rsa_n;
 struct publicKeyStore *rsa_p_list;
 int clients;
 
-uint8_t t_aes_keys_encrypted[16];
-
 int *getClientSocket(char *ip) {
 
   generatingAesKey(m_aes_keys_original, sizeof(m_aes_keys_original));
@@ -124,8 +122,9 @@ int *getClientSocket(char *ip) {
     t_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
   }
 
+  printf("Printing their aes keys:\n");
   for (int i = 0; i < 16; i++) {
-    printf("%ud\n", t_aes_keys_original[i]);
+    printf("%u\t", t_aes_keys_original[i]);
   }
 
   return clientSocket;

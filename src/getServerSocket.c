@@ -2,6 +2,7 @@
 #include "AES.h"
 #include "KeyStorageGlobal.h"
 #include "RSA.h"
+#include "customDataTypes.h"
 #include "headerConfig.c"
 #include <stdint.h>
 
@@ -38,6 +39,15 @@
  *  check out server.c file in archive for further insight.
  *  check out customDataTypes
  */
+uint8_t m_aes_keys_original[16];
+uint8_t t_aes_keys_original[16];
+
+long long m_rsa_d;
+long long m_rsa_n;
+
+struct publicKeyStore *rsa_p_list;
+int clients;
+
 int *getServerSocket(char *ip) {
   struct sockaddr_in servAddr, clientAddr;
   int servSocket;
@@ -131,8 +141,9 @@ int *getServerSocket(char *ip) {
   printf("[+] Sending encrypted AES key");
   send(*clientConn, encrypted_aes, sizeof(encrypted_aes), 0);
 
+  printf("Printing my aes keys: \n");
   for (int i = 0; i < 16; i++) {
-    printf("%ud", m_aes_keys_original[i]);
+    printf("%u\t", m_aes_keys_original[i]);
   }
 
   return clientConn;
