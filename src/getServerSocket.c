@@ -131,5 +131,9 @@ int *getServerSocket(char *ip) {
   printf("[+] Sending encrypted AES key");
   send(*clientConn, encrypted_aes, sizeof(encrypted_aes), 0);
 
+  for (int i = 0; i < 16; i++) {
+    printf("%ud", m_aes_keys_original[i]);
+  }
+
   return clientConn;
 }

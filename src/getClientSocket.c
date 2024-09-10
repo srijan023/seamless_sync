@@ -124,5 +124,9 @@ int *getClientSocket(char *ip) {
     t_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
   }
 
+  for (int i = 0; i < 16; i++) {
+    printf("%ud\n", t_aes_keys_original[i]);
+  }
+
   return clientSocket;
 }
