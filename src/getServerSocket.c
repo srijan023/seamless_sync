@@ -5,6 +5,7 @@
 #include "customDataTypes.h"
 #include "headerConfig.c"
 #include <stdint.h>
+#include <unistd.h>
 
 /**
  * Function: getServerSocket
@@ -103,6 +104,8 @@ int *getServerSocket(char *ip) {
   }
 
   printf("[+] Client accepted\n");
+
+  sleep(5);
 
   printf("[+] Receiving encrypted AES key\n");
   uint8_t encrypted_aes[16];

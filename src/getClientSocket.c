@@ -112,6 +112,8 @@ int *getClientSocket(char *ip) {
   printf("[+] Connected to the server\n");
   printf("\n");
 
+  sleep(5);
+
   printf("[+] Sending encrypted AES key\n");
   send(*clientSocket, encrypted_aes, sizeof(encrypted_aes), 0);
 
