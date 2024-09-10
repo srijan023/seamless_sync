@@ -2,6 +2,10 @@
 #include "../include/customDataTypes.h"
 #include "../include/getMyIp.h"
 #include "../src/headerConfig.c"
+#include "KeyStorageGlobal.h"
+
+struct publicKeyStore *rsa_p_list = NULL;
+int clients = -1;
 
 int isPresent(char **arr, char *key, int size) {
   for (int i = 0; i < size; i++) {
@@ -89,6 +93,11 @@ void *SSDPListen(long duration) {
   int size = 10;
   // allocating the outer index array
   char **IpList = (char **)malloc(size * sizeof(char *));
+
+  // allocating space for key storage
+  rsa_p_list =
+      (struct publicKeyStore *)malloc(20 * sizeof(struct publicKeyStore));
+
   if (IpList == NULL) {
     handleSSDPError("Can't create a dynamic array", msg);
 #ifdef _WIN32
@@ -165,19 +174,26 @@ void *SSDPListen(long duration) {
             continue;
           }
           count++;
+          clients++;
           // taking out the public keys from the SSDP message
           long long t_pub_e;
           long long t_pub_n;
-          // int result = sscanf(
-          //     msgBuffer,
-          //     "--------------------------M_SEARCH--------------------------\n"
-          //     "M-SEARCH * HTTP/1.1\nuuid:%*s\npub_e:%lld\npub_n:%lld\n"
-          //     "Man: ssdp:discover\nST: seamless:devices_all\nMX: 5",
-          //     &t_pub_e, &t_pub_n);
-          //
-          // printf("Their keys are: %lld %lld\n", t_pub_e, t_pub_n);
+          int result = sscanf(
+              msgBuffer,
+              "--------------------------M_SEARCH--------------------------\n"
+              "M-SEARCH * HTTP/1.1\nuuid:%*s\npub_e:%lld\npub_n:%lld\n"
+              "Man: ssdp:discover\nST: seamless:devices_all\nMX: 5",
+              &t_pub_e, &t_pub_n);
 
-          // printf("%s", msgBuffer);
+          printf("Their keys are: %lld %lld\n", t_pub_e, t_pub_n);
+
+          struct publicKeyStore pubKey;
+          pubKey.pub_e = t_pub_e;
+          pubKey.pub_n = t_pub_n;
+
+          strncpy(pubKey.ip, ip, 20);
+
+          rsa_p_list[count] = pubKey;
 
           strncpy(IpList[count], ip, 20);
           if (count == size - 1) {

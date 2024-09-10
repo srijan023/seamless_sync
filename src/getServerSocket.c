@@ -1,5 +1,9 @@
 #include "../include/UDPSend.h"
+#include "AES.h"
+#include "KeyStorageGlobal.h"
+#include "RSA.h"
 #include "headerConfig.c"
+#include <stdint.h>
 
 /**
  * Function: getServerSocket
@@ -89,6 +93,43 @@ int *getServerSocket(char *ip) {
   }
 
   printf("[+] Client accepted\n");
+
+  printf("[+] Receiving encrypted AES key\n");
+  uint8_t encrypted_aes[16];
+
+  recv(*clientConn, encrypted_aes, sizeof(encrypted_aes), 0);
+  for (int i = 0; i < 16; i++) {
+    t_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
+  }
+
+  generatingAesKey(m_aes_keys_original, sizeof(m_aes_keys_original));
+
+  long long e;
+  long long n;
+
+  int found_public_key = 0;
+
+  // finding the public key of the client
+  for (int i = 0; i <= clients; i++) {
+    struct publicKeyStore pks = rsa_p_list[i];
+    if (strncmp(pks.ip, ip, 20) == 0) {
+      found_public_key = 1;
+      e = pks.pub_e;
+      n = pks.pub_n;
+    }
+  }
+
+  if (!found_public_key) {
+    perror("[-] Public key of client not found\n");
+    exit(1);
+  }
+
+  for (int i = 0; i < 16; i++) {
+    encrypted_aes[i] = rsaEncrypt(m_aes_keys_original[i], e, n);
+  }
+
+  printf("[+] Sending encrypted AES key");
+  send(*clientConn, encrypted_aes, sizeof(encrypted_aes), 0);
 
   return clientConn;
 }

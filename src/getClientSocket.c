@@ -1,6 +1,10 @@
 #include "../include/UDPListen.h"
 #include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
+#include "AES.h"
+#include "KeyStorageGlobal.h"
+#include "RSA.h"
+#include <stdint.h>
 
 /**
  * Function: getclientSocket
@@ -31,7 +35,48 @@
  *  check out customDataTypes
  */
 
+uint8_t m_aes_keys_original[16];
+uint8_t t_aes_keys_original[16];
+
+long long m_rsa_d;
+long long m_rsa_n;
+
+struct publicKeyStore *rsa_p_list;
+int clients;
+
+uint8_t t_aes_keys_encrypted[16];
+
 int *getClientSocket(char *ip) {
+
+  generatingAesKey(m_aes_keys_original, sizeof(m_aes_keys_original));
+
+  // encrypting my key
+  uint8_t encrypted_aes[16];
+
+  long long e;
+  long long n;
+
+  int found_public_key = 0;
+
+  // finding the public key of the client
+  for (int i = 0; i <= clients; i++) {
+    struct publicKeyStore pks = rsa_p_list[i];
+    if (strncmp(pks.ip, ip, 20) == 0) {
+      found_public_key = 1;
+      e = pks.pub_e;
+      n = pks.pub_n;
+    }
+  }
+
+  if (!found_public_key) {
+    perror("[-] Public key of client not found\n");
+    exit(1);
+  }
+
+  for (int i = 0; i < 16; i++) {
+    encrypted_aes[i] = rsaEncrypt(m_aes_keys_original[i], e, n);
+  }
+
   int *clientSocket = (int *)malloc(sizeof(int));
 
   struct sockaddr_in server;
@@ -68,6 +113,16 @@ int *getClientSocket(char *ip) {
 
   printf("[+] Connected to the server\n");
   printf("\n");
+
+  printf("[+] Sending encrypted AES key\n");
+  send(*clientSocket, encrypted_aes, sizeof(encrypted_aes), 0);
+
+  printf("[+] Receiving encrypted AES key\n");
+  recv(*clientSocket, encrypted_aes, sizeof(encrypted_aes), 0);
+
+  for (int i = 0; i < 16; i++) {
+    t_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
+  }
 
   return clientSocket;
 }

@@ -23,4 +23,10 @@ struct socketInfo {
   int status;
   char pub_key[50];
 };
+
+struct publicKeyStore {
+  char ip[20];
+  long long pub_e;
+  long long pub_n;
+};
 #endif
