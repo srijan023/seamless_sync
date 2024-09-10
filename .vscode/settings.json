@@ -1,8 +1,0 @@
-{
-    "editor.smoothScrolling": true,
-    "editor.cursorSmoothCaretAnimation": "on",
-    "files.associations": {
-        "*.embeddedhtml": "html",
-        "ssdplistenerconnection.c": "cpp"
-    }
-}

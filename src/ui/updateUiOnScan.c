@@ -30,13 +30,13 @@ static void update_ui_on_scan(gpointer user_data) {
   gtk_box_append(GTK_BOX(vertical_box_for_device_list), frame);
 
   // for demo
-  const char *items[] = {"Apple", "Ball", "Cat"};
+  // const char *items[] = {"Apple", "Ball", "Cat"};
 
-  // for (int i = 0; i < data->result.size; i++) {
-  for (int i = 0; i < sizeof(items) / sizeof(items[i]); i++) {
+  for (int i = 0; i < data->result.size; i++) {
+    // for (int i = 0; i < sizeof(items) / sizeof(items[i]); i++) {
     GtkWidget *row = gtk_list_box_row_new();
-    // GtkWidget *label = create_wrapped_label(data->result.arr[i], 30);
-    GtkWidget *label = create_wrapped_label(items[i], 30);
+    GtkWidget *label = create_wrapped_label(data->result.arr[i], 30);
+    // GtkWidget *label = create_wrapped_label(items[i], 30);
     gtk_widget_set_name(GTK_WIDGET(row), data->result.arr[i]);
     gtk_widget_set_margin_top(label, 5);
     gtk_widget_set_margin_bottom(label, 5);

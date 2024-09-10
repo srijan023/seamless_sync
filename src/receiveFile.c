@@ -1,0 +1,67 @@
+#include "../include/customDataTypes.h"
+#include "../src/headerConfig.c"
+#include <stdio.h>
+
+#define BUFSIZE 1024
+
+void receiveFile(int *client_sock, char *file_name) {
+  struct fileInfo fi;
+  recv(*client_sock, &fi, sizeof(fi), 0);
+  printf("%s", fi.name);
+  sprintf(file_name, "%s", fi.name);
+
+  printf("remaining size: %lld\n", fi.size);
+  printf("File name is %s\n", fi.name);
+  printf("File type is %c\n", fi.type);
+
+  // getting the home directory ~/
+  char *home_dir = getenv("HOME");
+  if (home_dir == NULL) {
+    perror("[-] Could not get the home directory");
+    return;
+  }
+
+  // location to save the file is ~/Documents/seamless/
+  char folder_path[512];
+  sprintf(folder_path, "%s/Documents/seamless", home_dir);
+
+  // check if directory already exists
+  if (access(folder_path, F_OK) == -1) {
+    if (mkdir(folder_path, 0777) == -1) {
+      perror("[-] Could not create the directory");
+      return;
+    }
+  }
+
+  char file_path[512];
+  sprintf(file_path, "%s/%s", folder_path, fi.name);
+
+  long long remaining_size = fi.size;
+
+  char buffer[BUFSIZE];
+
+  // opening the file to write on;
+  FILE *fp = fopen(file_path, "wb");
+  if (fp == NULL) {
+    perror("[-] Could not open file\n");
+    return;
+  }
+
+  int n;
+  while (remaining_size > 0) {
+    // printf("remaining size: %lld\n", remaining_size);
+
+    n = recv(*client_sock, buffer, BUFSIZE, 0);
+    if (n > remaining_size) {
+      n = remaining_size;
+    }
+
+    remaining_size -= n;
+
+    fwrite(buffer, 1, n, fp);
+  }
+
+  fclose(fp);
+
+  return;
+}

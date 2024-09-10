@@ -1,3 +1,4 @@
+#include "RSAKeyInitializer.h"
 #include "activate.h"
 #include "gtk/gtk.h"
 

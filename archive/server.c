@@ -1,11 +1,11 @@
+#include "../include/getServerSocket.h"
+#include "../include/receiveFile.h"
+#include "../include/sendFile.h"
 #include "../src/headerConfig.c"
-#include "./getServerSocket.c"
-#include "./receiveFile.c"
-#include "./sendFile.c"
 #include <stdio.h>
 
 int main() {
-  int *connSocket = getServerSocket("192.168.88.56");
+  int *connSocket = getServerSocket("127.0.0.1");
   char file_name[100];
 
   int continueSending = 1;

@@ -2,10 +2,6 @@
 #include "../include/customDataTypes.h"
 #include "../include/getMyIp.h"
 #include "../src/headerConfig.c"
-// #include <ctime>
-// #include <cstdlib>
-#include <pthread.h>
-#include <sys/socket.h>
 
 int isPresent(char **arr, char *key, int size) {
   for (int i = 0; i < size; i++) {
@@ -129,78 +125,92 @@ void *SSDPListen(long duration) {
       break;
     }
 
-    fd_set read_fds;
-    struct timeval timeout;
+    // fd_set read_fds;
+    // struct timeval timeout;
 
-    FD_ZERO(&read_fds);
-    FD_SET(SSDPListener, &read_fds);
+    // FD_ZERO(&read_fds);
+    // FD_SET(SSDPListener, &read_fds);
 
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
+    // timeout.tv_sec = 1;
+    // timeout.tv_usec = 0;
 
-    int activity = select(SSDPListener + 1, &read_fds, NULL, NULL, &timeout);
+    // int activity = select(SSDPListener + 1, &read_fds, NULL, NULL, &timeout);
 
-    if (activity < 0) {
-      perror("select error");
-      close(SSDPListener);
-      exit(EXIT_FAILURE);
-    } else if (activity == 0) {
-      printf("Timeout: no data received within 5 seconds.\n");
-      break;
-    }
+    // if (activity < 0) {
+    // perror("select error");
+    // close(SSDPListener);
+    // exit(EXIT_FAILURE);
+    // } else if (activity == 0) {
+    // printf("Timeout: no data received within 5 seconds.\n");
+    // break;
+    // }
 
-    if (FD_ISSET(SSDPListener, &read_fds)) {
-      int nbytes =
-          recvfrom(SSDPListener, msgBuffer, 256, 0,
-                   (struct sockaddr *)&theirAddrs, (socklen_t *)&addrlen);
-      if (nbytes > 0) {
-        msgBuffer[nbytes] = '\0';
-        // checking if seamless is in the SSDP request header
-        const char *seam = strstr(msgBuffer, "seamless");
-        if (seam) {
-          const char *ipStart = strstr(msgBuffer, key);
-          if (ipStart) {
-            ipStart += strlen(key);
-            char ip[16]; // 255.255.255.255
-            sscanf(ipStart, "%15s", ip);
-            if (strcmp(ip, myIp.message) == 0) {
-              continue;
-            }
-            if (isPresent(IpList, ip, count + 1)) {
-              continue;
-            }
-            count++;
-            strncpy(IpList[count], ip, 20);
-            if (count == size - 1) {
-              IpList = doubleArraySize(IpList, size, &size);
-              for (int i = count; i < size; i++) {
-                IpList[i] = (char *)malloc(size * 20);
-                if (IpList[i] == NULL) {
-                  handleSSDPError("Can't create a dynamic array", msg);
+    // if (FD_ISSET(SSDPListener, &read_fds)) {
+    int nbytes =
+        recvfrom(SSDPListener, msgBuffer, 256, 0,
+                 (struct sockaddr *)&theirAddrs, (socklen_t *)&addrlen);
+    if (nbytes > 0) {
+      msgBuffer[nbytes] = '\0';
+      // checking if seamless is in the SSDP request header
+      const char *seam = strstr(msgBuffer, "seamless");
+      if (seam) {
+        const char *ipStart = strstr(msgBuffer, key);
+        if (ipStart) {
+          ipStart += strlen(key);
+          char ip[16]; // 255.255.255.255
+          sscanf(ipStart, "%15s", ip);
+          if (strcmp(ip, myIp.message) == 0) {
+            continue;
+          }
+          if (isPresent(IpList, ip, count + 1)) {
+            continue;
+          }
+          count++;
+          // taking out the public keys from the SSDP message
+          long long t_pub_e;
+          long long t_pub_n;
+          // int result = sscanf(
+          //     msgBuffer,
+          //     "--------------------------M_SEARCH--------------------------\n"
+          //     "M-SEARCH * HTTP/1.1\nuuid:%*s\npub_e:%lld\npub_n:%lld\n"
+          //     "Man: ssdp:discover\nST: seamless:devices_all\nMX: 5",
+          //     &t_pub_e, &t_pub_n);
+          //
+          // printf("Their keys are: %lld %lld\n", t_pub_e, t_pub_n);
+
+          printf("%s", msgBuffer);
+
+          strncpy(IpList[count], ip, 20);
+          if (count == size - 1) {
+            IpList = doubleArraySize(IpList, size, &size);
+            for (int i = count; i < size; i++) {
+              IpList[i] = (char *)malloc(size * 20);
+              if (IpList[i] == NULL) {
+                handleSSDPError("Can't create a dynamic array", msg);
 #ifdef _WIN32
-                  closesocket(SSDPListener);
-                  WSACleanup();
+                closesocket(SSDPListener);
+                WSACleanup();
 #elif __linux__
-                  close(SSDPListener);
+                close(SSDPListener);
 #endif
-                  return (void *)msg;
-                }
+                return (void *)msg;
               }
             }
-          } else {
-            // uuid not found
-            handleSSDPError("uuid not found on header", msg);
-#ifdef _WIN32
-            closesocket(SSDPListener);
-            WSACleanup();
-#elif __linux__
-            close(SSDPListener);
-#endif
-            return (void *)msg;
           }
+        } else {
+          // uuid not found
+          handleSSDPError("uuid not found on header", msg);
+#ifdef _WIN32
+          closesocket(SSDPListener);
+          WSACleanup();
+#elif __linux__
+          close(SSDPListener);
+#endif
+          return (void *)msg;
         }
       }
     }
+    // }
   }
   msg->size = count + 1;
   msg->arr = IpList;

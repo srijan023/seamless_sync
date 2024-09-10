@@ -1,7 +1,7 @@
 #include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
 
-#define BUFSIZE 1024 * 8
+#define BUFSIZE 1024
 
 void sendFile(int *client_sock, char *file_path) {
   FILE *fp = fopen(file_path, "rb");
@@ -32,6 +32,10 @@ void sendFile(int *client_sock, char *file_path) {
   fi.type = 'F';
   fi.size = file_size;
   strcpy(fi.name, file_name);
+
+  printf("remaining size: %lld\n", fi.size);
+  printf("File name is %s\n", fi.name);
+  printf("File type is %c\n", fi.type);
 
   // sending the file information to the receiver
   send(*client_sock, &fi, sizeof(fi), 0);
