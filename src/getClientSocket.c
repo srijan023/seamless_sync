@@ -97,12 +97,6 @@ int *getClientSocket(char *ip) {
     free(clientSocket);
     return NULL;
   }
-  int flag = 1; // 1 to disable Nagle's Algorithm
-  if (setsockopt(*clientSocket, IPPROTO_TCP, TCP_NODELAY, (char *)&flag,
-                 sizeof(int)) < 0) {
-    perror("[-] Error while setting TCP_NODELAY");
-    return NULL;
-  }
 
   printf("[+] Socket created successfully\n");
 
