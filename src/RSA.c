@@ -1,7 +1,4 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include "./headerConfig.c"
 
 // Function to calculate the greatest common divisor
 long long gcd(long long a, long long b) {
@@ -110,46 +107,46 @@ long long rsaDecrypt(long long cipher, long long d, long long n) {
   return modularExponentiation(cipher, d, n);
 }
 
-int main() {
-  // Initialize random seed
-  srand(time(NULL));
-
-  // Key generation
-  long long e, d, n;
-  int bitLength = 30; // Adjust bit length as needed
-  long long phi = generateRSAKeys(bitLength, &e, &d, &n);
-
-  printf("Public Key: (e = %lld, n = %lld)\n", e, n);
-  printf("Private Key: (d = %lld, n = %lld)\n", d, n);
-
-  // Example message (AES key pattern)
-  long long message[16] = {99, 63,  227, 19,  47,  243, 71, 22,
-                           63, 200, 192, 207, 227, 137, 43, 200};
-
-  printf("Original message: \n");
-  for (int i = 0; i < 16; i++) {
-    printf("%lld\t", message[i]);
-  }
-
-  long long encryptedMessage[16];
-  // Encryption
-  for (int i = 0; i < 16; i++) {
-    encryptedMessage[i] = rsaEncrypt(message[i], e, n);
-  }
-  printf("\nEncrypted message: \n");
-  for (int i = 0; i < 16; i++) {
-    printf("%lld\t", encryptedMessage[i]);
-  }
-
-  long long decryptedMessage[16];
-  // Decryption
-  for (int i = 0; i < 16; i++) {
-    decryptedMessage[i] = rsaDecrypt(encryptedMessage[i], d, n);
-  }
-  printf("\nDecryption message: \n");
-  for (int i = 0; i < 16; i++) {
-    printf("%lld\t", decryptedMessage[i]);
-  }
-
-  return 0;
-}
+// int main() {
+//   // Initialize random seed
+//   srand(time(NULL));
+//
+//   // Key generation
+//   long long e, d, n;
+//   int bitLength = 30; // Adjust bit length as needed
+//   long long phi = generateRSAKeys(bitLength, &e, &d, &n);
+//
+//   printf("Public Key: (e = %lld, n = %lld)\n", e, n);
+//   printf("Private Key: (d = %lld, n = %lld)\n", d, n);
+//
+//   // Example message (AES key pattern)
+//   long long message[16] = {99, 63,  227, 19,  47,  243, 71, 22,
+//                            63, 200, 192, 207, 227, 137, 43, 200};
+//
+//   printf("Original message: \n");
+//   for (int i = 0; i < 16; i++) {
+//     printf("%lld\t", message[i]);
+//   }
+//
+//   long long encryptedMessage[16];
+//   // Encryption
+//   for (int i = 0; i < 16; i++) {
+//     encryptedMessage[i] = rsaEncrypt(message[i], e, n);
+//   }
+//   printf("\nEncrypted message: \n");
+//   for (int i = 0; i < 16; i++) {
+//     printf("%lld\t", encryptedMessage[i]);
+//   }
+//
+//   long long decryptedMessage[16];
+//   // Decryption
+//   for (int i = 0; i < 16; i++) {
+//     decryptedMessage[i] = rsaDecrypt(encryptedMessage[i], d, n);
+//   }
+//   printf("\nDecryption message: \n");
+//   for (int i = 0; i < 16; i++) {
+//     printf("%lld\t", decryptedMessage[i]);
+//   }
+//
+//   return 0;
+// }

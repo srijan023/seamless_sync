@@ -166,6 +166,18 @@ void *SSDPListen(long duration) {
               continue;
             }
             count++;
+            // taking out the public keys from the SSDP message
+            long long t_pub_e;
+            long long t_pub_n;
+            int result = sscanf(
+                msgBuffer,
+                "--------------------------M_SEARCH--------------------------\n"
+                "M-SEARCH * HTTP/1.1\nuuid:%*s\npub_e:%lld\npub_n:%lld\n"
+                "Man: ssdp:discover\nST: seamless:devices_all\nMX: 5",
+                &t_pub_e, &t_pub_n);
+
+            printf("%lld %lld\n", t_pub_e, t_pub_n);
+
             strncpy(IpList[count], ip, 20);
             if (count == size - 1) {
               IpList = doubleArraySize(IpList, size, &size);

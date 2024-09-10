@@ -1,11 +1,11 @@
+#include "../include/getServerSocket.h"
+#include "../include/receiveFile.h"
+#include "../include/sendFile.h"
 #include "../src/headerConfig.c"
-#include "./getServerSocket.c"
-#include "./receiveFile.c"
-#include "./sendFile.c"
 #include <stdio.h>
 
 int main() {
-  int *connSocket = getServerSocket("192.168.176.74");
+  int *connSocket = getServerSocket("127.0.0.1");
   char file_name[100];
 
   int continueSending = 1;
@@ -20,7 +20,7 @@ int main() {
     }
     if (strncmp(buffer, "/file", 5) == 0) {
       printf("[+] Receiving files\n");
-      receiveFile(connSocket);
+      receiveFile(connSocket, file_name);
     }
     memset(buffer, '\0', sizeof(buffer));
     if (continueSending) {
