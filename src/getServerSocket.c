@@ -4,6 +4,7 @@
 #include "RSA.h"
 #include "customDataTypes.h"
 #include "headerConfig.c"
+#include <netinet/tcp.h>
 #include <stdint.h>
 #include <unistd.h>
 
@@ -103,9 +104,14 @@ int *getServerSocket(char *ip) {
     return NULL;
   }
 
-  printf("[+] Client accepted\n");
+  int flag = 1; // 1 to disable Nagle's Algorithm
+  if (setsockopt(*clientConn, IPPROTO_TCP, TCP_NODELAY, (char *)&flag,
+                 sizeof(int)) < 0) {
+    perror("[-] Error while setting TCP_NODELAY");
+    return NULL;
+  }
 
-  sleep(5);
+  printf("[+] Client accepted\n");
 
   printf("[+] Receiving encrypted AES key\n");
   uint8_t encrypted_aes[16];
@@ -116,6 +122,15 @@ int *getServerSocket(char *ip) {
   }
 
   generatingAesKey(m_aes_keys_original, sizeof(m_aes_keys_original));
+
+  printf("Printing my aes keys: \n");
+  // for (int i = 0; i < 16; i++) {
+  //   printf("%u\t", m_aes_keys_original[i]);
+  // }
+  printf("%u", m_aes_keys_original[0]);
+  printf("%u", m_aes_keys_original[1]);
+  printf("%u", m_aes_keys_original[2]);
+  printf("%u", m_aes_keys_original[3]);
 
   long long e;
   long long n;
@@ -143,11 +158,6 @@ int *getServerSocket(char *ip) {
 
   printf("[+] Sending encrypted AES key");
   send(*clientConn, encrypted_aes, sizeof(encrypted_aes), 0);
-
-  printf("Printing my aes keys: \n");
-  for (int i = 0; i < 16; i++) {
-    printf("%u\t", m_aes_keys_original[i]);
-  }
 
   return clientConn;
 }

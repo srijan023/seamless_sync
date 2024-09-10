@@ -4,6 +4,7 @@
 #include "AES.h"
 #include "KeyStorageGlobal.h"
 #include "RSA.h"
+#include <netinet/tcp.h>
 #include <stdint.h>
 
 /**
@@ -96,6 +97,12 @@ int *getClientSocket(char *ip) {
     free(clientSocket);
     return NULL;
   }
+  int flag = 1; // 1 to disable Nagle's Algorithm
+  if (setsockopt(*clientSocket, IPPROTO_TCP, TCP_NODELAY, (char *)&flag,
+                 sizeof(int)) < 0) {
+    perror("[-] Error while setting TCP_NODELAY");
+    return NULL;
+  }
 
   printf("[+] Socket created successfully\n");
 
@@ -111,8 +118,6 @@ int *getClientSocket(char *ip) {
 
   printf("[+] Connected to the server\n");
   printf("\n");
-
-  sleep(5);
 
   printf("[+] Sending encrypted AES key\n");
   send(*clientSocket, encrypted_aes, sizeof(encrypted_aes), 0);
