@@ -104,13 +104,6 @@ int *getServerSocket(char *ip) {
     return NULL;
   }
 
-  int flag = 1; // 1 to disable Nagle's Algorithm
-  if (setsockopt(*clientConn, IPPROTO_TCP, TCP_NODELAY, (char *)&flag,
-                 sizeof(int)) < 0) {
-    perror("[-] Error while setting TCP_NODELAY");
-    return NULL;
-  }
-
   printf("[+] Client accepted\n");
 
   printf("[+] Receiving encrypted AES key\n");
