@@ -13,6 +13,10 @@ long long m_rsa_phi;
 
 // executed before the main function to initialize the rsa keys
 __attribute__((constructor)) void initializeRSAKeys() {
+  // Initialize random seed
+  srand(time(NULL));
   printf("I am getting executed before main function");
   m_rsa_phi = generateRSAKeys(BITLENGTH, &m_rsa_e, &m_rsa_d, &m_rsa_n);
+  printf("My keys (e, n, d ,phi): %lld %lld %lld %lld\n", m_rsa_e, m_rsa_n,
+         m_rsa_d, m_rsa_phi);
 }

@@ -108,8 +108,6 @@ long long rsaDecrypt(long long cipher, long long d, long long n) {
 }
 
 // int main() {
-//   // Initialize random seed
-//   srand(time(NULL));
 //
 //   // Key generation
 //   long long e, d, n;
