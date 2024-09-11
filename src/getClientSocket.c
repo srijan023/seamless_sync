@@ -50,7 +50,7 @@ int *getClientSocket(char *ip) {
   generatingAesKey(m_aes_keys_original, sizeof(m_aes_keys_original));
 
   // encrypting my key
-  uint8_t encrypted_aes[16];
+  long long encrypted_aes[16];
 
   long long e;
   long long n;

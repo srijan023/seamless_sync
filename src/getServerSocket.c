@@ -107,7 +107,7 @@ int *getServerSocket(char *ip) {
   printf("[+] Client accepted\n");
 
   printf("[+] Receiving encrypted AES key\n");
-  uint8_t encrypted_aes[16];
+  long long encrypted_aes[16];
 
   recv(*clientConn, encrypted_aes, sizeof(encrypted_aes), 0);
   for (int i = 0; i < 16; i++) {
