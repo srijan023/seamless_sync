@@ -127,6 +127,7 @@ int *getClientSocket(char *ip) {
   for (int i = 0; i < 16; i++) {
     printf("%u\t", t_aes_keys_original[i]);
   }
+  printf("This statement is getting executed\n");
 
   return clientSocket;
 }

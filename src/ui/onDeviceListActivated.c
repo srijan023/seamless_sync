@@ -166,6 +166,7 @@ void *receive_messages(gpointer data) {
 static void client_thread_func(GTask *task, gpointer source_object,
                                gpointer data, GCancellable *cancellable) {
   connSocket = getClientSocket(data);
+  printf("Client socket got\n");
   if (g_task_return_error_if_cancelled(task)) {
     return;
   }
@@ -178,6 +179,7 @@ static void client_thread_func(GTask *task, gpointer source_object,
 static void server_thread_func(GTask *task, gpointer source_object,
                                gpointer data, GCancellable *cancellable) {
   connSocket = getServerSocket(data);
+  printf("Got server socket\n");
   if (g_task_return_error_if_cancelled(task)) {
     return;
   }

@@ -125,6 +125,8 @@ int *getServerSocket(char *ip) {
   printf("%u", m_aes_keys_original[2]);
   printf("%u", m_aes_keys_original[3]);
 
+  printf("After teh print statement");
+
   long long e;
   long long n;
 

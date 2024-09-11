@@ -157,6 +157,7 @@ void *SSDPListen(long duration) {
     int nbytes =
         recvfrom(SSDPListener, msgBuffer, 256, 0,
                  (struct sockaddr *)&theirAddrs, (socklen_t *)&addrlen);
+    printf("%s", msgBuffer);
     if (nbytes > 0) {
       msgBuffer[nbytes] = '\0';
       // checking if seamless is in the SSDP request header
@@ -173,6 +174,7 @@ void *SSDPListen(long duration) {
           if (isPresent(IpList, ip, count + 1)) {
             continue;
           }
+          printf("Here");
           count++;
           clients++;
           // taking out the public keys from the SSDP message
