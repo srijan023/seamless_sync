@@ -122,12 +122,16 @@ int *getClientSocket(char *ip) {
   for (int i = 0; i < 16; i++) {
     t_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
   }
+  printf("Printing my aes keys:\n");
+  for (int i = 0; i < 16; i++) {
+    printf("%u\t", m_aes_keys_original[i]);
+  }
 
   printf("Printing their aes keys:\n");
   for (int i = 0; i < 16; i++) {
     printf("%u\t", t_aes_keys_original[i]);
   }
-  printf("This statement is getting executed\n");
+  printf("\n");
 
   return clientSocket;
 }

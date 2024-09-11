@@ -17,4 +17,5 @@ __attribute__((constructor)) void initializeRSAKeys() {
   srand(time(NULL));
   printf("[+] Generating encryption keys\n");
   m_rsa_phi = generateRSAKeys(BITLENGTH, &m_rsa_e, &m_rsa_d, &m_rsa_n);
+  printf("%lld %lld %lld (e, d, n)", m_rsa_e, m_rsa_d, m_rsa_n);
 }

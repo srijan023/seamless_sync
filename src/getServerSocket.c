@@ -114,18 +114,20 @@ int *getServerSocket(char *ip) {
     t_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
   }
 
+  printf("Their aes keys are: \n");
+  for (int i = 0; i < 16; i++) {
+    printf("%u\t", t_aes_keys_original[i]);
+  }
+  printf("\n");
+
   generatingAesKey(m_aes_keys_original, sizeof(m_aes_keys_original));
 
   printf("Printing my aes keys: \n");
-  // for (int i = 0; i < 16; i++) {
-  //   printf("%u\t", m_aes_keys_original[i]);
-  // }
-  printf("%u", m_aes_keys_original[0]);
-  printf("%u", m_aes_keys_original[1]);
-  printf("%u", m_aes_keys_original[2]);
-  printf("%u", m_aes_keys_original[3]);
+  for (int i = 0; i < 16; i++) {
+    printf("%u\t", m_aes_keys_original[i]);
+  }
 
-  printf("After teh print statement");
+  printf("\n");
 
   long long e;
   long long n;
@@ -146,6 +148,8 @@ int *getServerSocket(char *ip) {
     perror("[-] Public key of client not found\n");
     exit(1);
   }
+
+  printf("Their public keys are %lld %lld", e, n);
 
   for (int i = 0; i < 16; i++) {
     encrypted_aes[i] = rsaEncrypt(m_aes_keys_original[i], e, n);

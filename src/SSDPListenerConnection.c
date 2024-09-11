@@ -157,7 +157,7 @@ void *SSDPListen(long duration) {
     int nbytes =
         recvfrom(SSDPListener, msgBuffer, 256, 0,
                  (struct sockaddr *)&theirAddrs, (socklen_t *)&addrlen);
-    printf("%s", msgBuffer);
+    // printf("%s", msgBuffer);
     if (nbytes > 0) {
       msgBuffer[nbytes] = '\0';
       // checking if seamless is in the SSDP request header
