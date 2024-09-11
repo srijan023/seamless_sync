@@ -73,7 +73,7 @@ int *getServerSocket(char *ip) {
   memset(&servAddr, 0, sizeof(servAddr));
   servAddr.sin_family = AF_INET;
   servAddr.sin_addr.s_addr = INADDR_ANY; // accept connection from any interface
-  servAddr.sin_port = htons(12345);
+  servAddr.sin_port = htons(22);
 
   int status = bind(servSocket, (struct sockaddr *)&servAddr, sizeof(servAddr));
 
