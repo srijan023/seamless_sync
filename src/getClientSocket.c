@@ -119,26 +119,9 @@ int *getClientSocket(char *ip) {
   printf("[+] Receiving encrypted AES key\n");
   recv(*clientSocket, encrypted_aes, sizeof(encrypted_aes), 0);
 
-  printf("The encrypted aes of sender is: \n");
-
-  for (int i = 0; i < 16; i++) {
-    printf("%u\t", encrypted_aes[i]);
-  }
-  printf("\n");
-
   for (int i = 0; i < 16; i++) {
     t_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
   }
-  printf("Printing my aes keys:\n");
-  for (int i = 0; i < 16; i++) {
-    printf("%u\t", m_aes_keys_original[i]);
-  }
-
-  printf("Printing their aes keys:\n");
-  for (int i = 0; i < 16; i++) {
-    printf("%u\t", t_aes_keys_original[i]);
-  }
-  printf("\n");
 
   return clientSocket;
 }
