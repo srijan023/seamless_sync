@@ -49,26 +49,6 @@ int *getClientSocket(char *ip) {
   // encrypting my key
   long long encrypted_aes[16];
 
-  long long e;
-  long long n;
-
-  int found_public_key = 0;
-
-  // finding the public key of the client
-  for (int i = 0; i <= clients; i++) {
-    struct publicKeyStore pks = rsa_p_list[i];
-    if (strncmp(pks.ip, ip, 20) == 0) {
-      found_public_key = 1;
-      e = pks.pub_e;
-      n = pks.pub_n;
-    }
-  }
-
-  if (!found_public_key) {
-    perror("[-] Public key of client not found\n");
-    exit(1);
-  }
-
   int *clientSocket = (int *)malloc(sizeof(int));
 
   struct sockaddr_in server;
@@ -112,6 +92,12 @@ int *getClientSocket(char *ip) {
   for (int i = 0; i < 16; i++) {
     m_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
   }
+
+  printf("Printing the keys after decryption:\n");
+  for (int i = 0; i < 16; i++) {
+    printf("%u\t", m_aes_keys_original[i]);
+  }
+  printf("\n");
 
   return clientSocket;
 }

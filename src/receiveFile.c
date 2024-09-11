@@ -71,11 +71,11 @@ void receiveFile(int *client_sock, char *file_name) {
   }
   printf("\n");
 
+  fclose(fp);
+
   printf("[+] Decryption started\n");
   decryptFile("./encrypted.enc", file_path, m_aes_keys_original);
   printf("[+] Decryption ended\n");
-
-  fclose(fp);
 
   return;
 }

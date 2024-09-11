@@ -110,6 +110,12 @@ int *getServerSocket(char *ip) {
 
   generatingAesKey(m_aes_keys_original, sizeof(m_aes_keys_original));
 
+  printf("Printing the keys after geneeration:\n");
+  for (int i = 0; i < 16; i++) {
+    printf("%u\t", m_aes_keys_original[i]);
+  }
+  printf("\n");
+
   long long e;
   long long n;
 

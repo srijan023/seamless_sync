@@ -16,5 +16,4 @@ extern int clients;
 
 // for AES algorithm
 extern uint8_t m_aes_keys_original[16];
-extern uint8_t t_aes_keys_original[16];
 #endif // !KEYGLOBAL_H
