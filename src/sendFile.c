@@ -40,8 +40,16 @@ void sendFile(int *client_sock, char *file_path) {
 
   int n;
 
+  printf("Printing the keys\n");
+  for (int i = 0; i < 16; i++) {
+    printf("%u\t", m_aes_keys_original[i]);
+  }
+  printf("\n");
+
   // encrypt the original file
+  printf("[+] Encryption started\n");
   encryptFile(file_path, "./encrypted.enc", m_aes_keys_original);
+  printf("[+] Encryption ended\n");
 
   fp = fopen("./encrypted.enc", "rb");
 

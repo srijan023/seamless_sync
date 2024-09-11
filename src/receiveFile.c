@@ -65,7 +65,15 @@ void receiveFile(int *client_sock, char *file_name) {
     fwrite(buffer, 1, n, fp);
   }
 
+  printf("Printing the keys\n");
+  for (int i = 0; i < 16; i++) {
+    printf("%u\t", m_aes_keys_original[i]);
+  }
+  printf("\n");
+
+  printf("[+] Decryption started\n");
   decryptFile("./encrypted.enc", file_path, m_aes_keys_original);
+  printf("[+] Decryption ended\n");
 
   fclose(fp);
 
