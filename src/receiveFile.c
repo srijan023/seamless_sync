@@ -1,8 +1,13 @@
 #include "../include/customDataTypes.h"
 #include "../src/headerConfig.c"
+#include "AES.h"
+#include "KeyStorageGlobal.h"
+#include <stdint.h>
 #include <stdio.h>
 
 #define BUFSIZE 1024
+
+uint8_t t_aes_keys_original[16];
 
 void receiveFile(int *client_sock, char *file_name) {
   struct fileInfo fi;
@@ -40,7 +45,7 @@ void receiveFile(int *client_sock, char *file_name) {
   char buffer[BUFSIZE];
 
   // opening the file to write on;
-  FILE *fp = fopen(file_path, "wb");
+  FILE *fp = fopen("./encrypted.enc", "wb");
   if (fp == NULL) {
     perror("[-] Could not open file\n");
     return;
@@ -59,6 +64,8 @@ void receiveFile(int *client_sock, char *file_name) {
 
     fwrite(buffer, 1, n, fp);
   }
+
+  decryptFile("./encrypted.enc", file_path, t_aes_keys_original);
 
   fclose(fp);
 

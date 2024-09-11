@@ -159,7 +159,7 @@ int *getServerSocket(char *ip) {
   send(*clientConn, encrypted_aes, sizeof(encrypted_aes), 0);
   printf("I am sending\n");
   for (int i = 0; i < 16; i++) {
-    printf("%u\t", encrypted_aes[i]);
+    printf("%lld\t", encrypted_aes[i]);
   }
   printf("\n");
 

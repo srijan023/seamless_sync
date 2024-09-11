@@ -440,31 +440,58 @@ char *readFile(const char *filePath, size_t *fileSize) {
 
 void encryptFile(const char *inputPath, const char *outputPath,
                  const uint8_t *key) {
-  size_t fileSize;
-  char *buffer = readFile(inputPath, &fileSize);
-  if (buffer == NULL) {
+  FILE *inputFile = fopen(inputPath, "rb");
+  if (inputFile == NULL) {
+    printf("Could not open input file %s\n", inputPath);
     return;
-  }
-
-  padBuffer(buffer, &fileSize);
-
-  uint32_t expandedKeys[44];
-  keyExpansion(key, expandedKeys);
-
-  for (int i = 0; i < fileSize; i += AES_BLOCK_SIZE) {
-    encryptionAES((uint8_t *)buffer + i, expandedKeys);
   }
 
   FILE *outputFile = fopen(outputPath, "wb");
   if (outputFile == NULL) {
     printf("Could not open output file %s\n", outputPath);
-    free(buffer);
+    fclose(inputFile);
     return;
   }
 
-  fwrite(buffer, 1, fileSize, outputFile);
+  uint8_t buffer[AES_BLOCK_SIZE]; // Buffer to hold the block to be encrypted
+  uint8_t paddedBlock[AES_BLOCK_SIZE]; // Buffer to hold the padded block (if
+                                       // needed)
+  size_t bytesRead;
+  uint32_t expandedKeys[44];
+
+  // Key expansion for AES
+  keyExpansion(key, expandedKeys);
+
+  // Read the file in blocks and encrypt each block
+  while ((bytesRead = fread(buffer, 1, AES_BLOCK_SIZE, inputFile)) ==
+         AES_BLOCK_SIZE) {
+    // Encrypt the current block
+    encryptionAES(buffer, expandedKeys);
+
+    // Write the encrypted block to the output file
+    fwrite(buffer, 1, AES_BLOCK_SIZE, outputFile);
+  }
+
+  // If we have a partial block (end of file), we need to pad it
+  if (bytesRead > 0) {
+    // Copy the last partial block to the paddedBlock buffer
+    memcpy(paddedBlock, buffer, bytesRead);
+
+    // Pad the block
+    for (size_t i = bytesRead; i < AES_BLOCK_SIZE; i++) {
+      paddedBlock[i] = AES_BLOCK_SIZE - bytesRead; // PKCS7 padding
+    }
+
+    // Encrypt the padded block
+    encryptionAES(paddedBlock, expandedKeys);
+
+    // Write the encrypted padded block to the output file
+    fwrite(paddedBlock, 1, AES_BLOCK_SIZE, outputFile);
+  }
+
+  // Clean up and close files
+  fclose(inputFile);
   fclose(outputFile);
-  free(buffer);
 }
 
 int removePadding(char *buffer, size_t length) {
@@ -488,36 +515,70 @@ int removePadding(char *buffer, size_t length) {
 
 void decryptFile(const char *inputPath, const char *outputPath,
                  const uint8_t *key) {
-  size_t fileSize;
-  char *buffer = readFile(inputPath, &fileSize);
-  if (buffer == NULL) {
+  FILE *inputFile = fopen(inputPath, "rb");
+  if (inputFile == NULL) {
+    printf("Could not open input file %s\n", inputPath);
     return;
-  }
-
-  uint32_t expandedKeys[44];
-  keyExpansion(key, expandedKeys);
-
-  for (int i = 0; i < fileSize; i += AES_BLOCK_SIZE) {
-    decryptionAES((uint8_t *)buffer + i, expandedKeys);
   }
 
   FILE *outputFile = fopen(outputPath, "wb");
   if (outputFile == NULL) {
     printf("Could not open output file %s\n", outputPath);
-    free(buffer);
+    fclose(inputFile);
     return;
   }
 
-  size_t res = removePadding(buffer, fileSize);
-  if (res <= 0) {
-    printf("Failed removing padding\n");
-  } else {
-    fileSize = res;
+  uint8_t buffer[AES_BLOCK_SIZE];         // Buffer to hold the encrypted block
+  uint8_t decryptedBlock[AES_BLOCK_SIZE]; // Buffer to hold the decrypted block
+  size_t bytesRead;
+  uint32_t expandedKeys[44];
+
+  // Key expansion for AES
+  keyExpansion(key, expandedKeys);
+
+  size_t fileSize;
+  fseek(inputFile, 0, SEEK_END); // Go to the end of the file to find the size
+  fileSize = ftell(inputFile);
+  fseek(inputFile, 0, SEEK_SET); // Reset file pointer to the beginning
+
+  size_t blocksRead = 0;
+  while ((bytesRead = fread(buffer, 1, AES_BLOCK_SIZE, inputFile)) ==
+         AES_BLOCK_SIZE) {
+    blocksRead++;
+
+    // Decrypt the current block
+    decryptionAES(buffer, expandedKeys);
+
+    // If this is the last block, check and remove padding
+    if (blocksRead == fileSize / AES_BLOCK_SIZE) {
+      // Last block: remove PKCS7 padding
+      uint8_t paddingValue = buffer[AES_BLOCK_SIZE - 1];
+      if (paddingValue > 0 && paddingValue <= AES_BLOCK_SIZE) {
+        // Check if padding is valid
+        int validPadding = 1;
+        for (int i = 0; i < paddingValue; i++) {
+          if (buffer[AES_BLOCK_SIZE - 1 - i] != paddingValue) {
+            validPadding = 0;
+            break;
+          }
+        }
+        // If valid padding, adjust the amount to write
+        if (validPadding) {
+          fwrite(buffer, 1, AES_BLOCK_SIZE - paddingValue, outputFile);
+        } else {
+          // Invalid padding, write the whole block
+          fwrite(buffer, 1, AES_BLOCK_SIZE, outputFile);
+        }
+      }
+    } else {
+      // Write the decrypted block to the output file
+      fwrite(buffer, 1, AES_BLOCK_SIZE, outputFile);
+    }
   }
 
-  fwrite(buffer, 1, fileSize, outputFile);
+  // Clean up and close files
+  fclose(inputFile);
   fclose(outputFile);
-  free(buffer);
 }
 
 // int main() {
