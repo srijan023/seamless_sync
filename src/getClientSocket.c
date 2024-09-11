@@ -37,7 +37,6 @@
  */
 
 uint8_t m_aes_keys_original[16];
-uint8_t t_aes_keys_original[16];
 
 long long m_rsa_d;
 long long m_rsa_n;
@@ -46,8 +45,6 @@ struct publicKeyStore *rsa_p_list;
 int clients;
 
 int *getClientSocket(char *ip) {
-
-  generatingAesKey(m_aes_keys_original, sizeof(m_aes_keys_original));
 
   // encrypting my key
   long long encrypted_aes[16];
@@ -70,10 +67,6 @@ int *getClientSocket(char *ip) {
   if (!found_public_key) {
     perror("[-] Public key of client not found\n");
     exit(1);
-  }
-
-  for (int i = 0; i < 16; i++) {
-    encrypted_aes[i] = rsaEncrypt(m_aes_keys_original[i], e, n);
   }
 
   int *clientSocket = (int *)malloc(sizeof(int));
@@ -113,14 +106,11 @@ int *getClientSocket(char *ip) {
   printf("[+] Connected to the server\n");
   printf("\n");
 
-  printf("[+] Sending encrypted AES key\n");
-  send(*clientSocket, encrypted_aes, sizeof(encrypted_aes), 0);
-
   printf("[+] Receiving encrypted AES key\n");
   recv(*clientSocket, encrypted_aes, sizeof(encrypted_aes), 0);
 
   for (int i = 0; i < 16; i++) {
-    t_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
+    m_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
   }
 
   return clientSocket;

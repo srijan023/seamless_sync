@@ -7,7 +7,7 @@
 
 #define BUFSIZE 1024
 
-uint8_t t_aes_keys_original[16];
+uint8_t m_aes_keys_original[16];
 
 void receiveFile(int *client_sock, char *file_name) {
   struct fileInfo fi;
@@ -65,7 +65,7 @@ void receiveFile(int *client_sock, char *file_name) {
     fwrite(buffer, 1, n, fp);
   }
 
-  decryptFile("./encrypted.enc", file_path, t_aes_keys_original);
+  decryptFile("./encrypted.enc", file_path, m_aes_keys_original);
 
   fclose(fp);
 

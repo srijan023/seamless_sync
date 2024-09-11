@@ -42,7 +42,6 @@
  *  check out customDataTypes
  */
 uint8_t m_aes_keys_original[16];
-uint8_t t_aes_keys_original[16];
 
 long long m_rsa_d;
 long long m_rsa_n;
@@ -108,11 +107,6 @@ int *getServerSocket(char *ip) {
 
   printf("[+] Receiving encrypted AES key\n");
   long long encrypted_aes[16];
-
-  recv(*clientConn, encrypted_aes, sizeof(encrypted_aes), 0);
-  for (int i = 0; i < 16; i++) {
-    t_aes_keys_original[i] = rsaDecrypt(encrypted_aes[i], m_rsa_d, m_rsa_n);
-  }
 
   generatingAesKey(m_aes_keys_original, sizeof(m_aes_keys_original));
 
