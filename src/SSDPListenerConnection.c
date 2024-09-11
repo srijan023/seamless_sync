@@ -4,7 +4,7 @@
 #include "../src/headerConfig.c"
 #include "KeyStorageGlobal.h"
 
-struct publicKeyStore *rsa_p_list = NULL;
+struct publicKeyStore *rsa_p_list;
 int clients = -1;
 
 int isPresent(char **arr, char *key, int size) {

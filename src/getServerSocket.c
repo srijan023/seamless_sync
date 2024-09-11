@@ -131,6 +131,8 @@ int *getServerSocket(char *ip) {
     }
   }
 
+  free(rsa_p_list);
+
   if (!found_public_key) {
     perror("[-] Public key of client not found\n");
     exit(1);

@@ -46,6 +46,7 @@ int clients;
 
 int *getClientSocket(char *ip) {
 
+  free(rsa_p_list);
   // encrypting my key
   long long encrypted_aes[16];
 
