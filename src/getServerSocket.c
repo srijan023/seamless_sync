@@ -149,7 +149,7 @@ int *getServerSocket(char *ip) {
     exit(1);
   }
 
-  printf("Their public keys are %lld %lld", e, n);
+  printf("Their public keys are %lld %lld\n", e, n);
 
   for (int i = 0; i < 16; i++) {
     encrypted_aes[i] = rsaEncrypt(m_aes_keys_original[i], e, n);
@@ -157,6 +157,11 @@ int *getServerSocket(char *ip) {
 
   printf("[+] Sending encrypted AES key");
   send(*clientConn, encrypted_aes, sizeof(encrypted_aes), 0);
+  printf("I am sending\n");
+  for (int i = 0; i < 16; i++) {
+    printf("%u\t", encrypted_aes[i]);
+  }
+  printf("\n");
 
   return clientConn;
 }
