@@ -87,6 +87,19 @@ int *getClientSocket(char *ip) {
   printf("[+] Connected to the server\n");
   printf("\n");
 
+  struct publicKeyStore pks;
+  memset(&pks, 0, sizeof(pks));
+
+  recv(*clientSocket, &pks, sizeof(pks), 0);
+
+  t_rsa_e = pks.pub_e;
+  t_rsa_n = pks.pub_n;
+
+  pks.pub_e = m_rsa_e;
+  pks.pub_n = m_rsa_n;
+
+  send(*clientSocket, &pks, sizeof(pks), 0);
+
   printf("[+] Receiving encrypted AES key\n");
   recv(*clientSocket, encrypted_aes, sizeof(encrypted_aes), 0);
 

@@ -6,6 +6,7 @@
 #include "headerConfig.c"
 #include <netinet/tcp.h>
 #include <stdint.h>
+#include <sys/socket.h>
 #include <unistd.h>
 
 /**
@@ -104,6 +105,20 @@ int *getServerSocket(char *ip) {
   }
 
   printf("[+] Client accepted\n");
+
+  struct publicKeyStore pks;
+  memset(&pks, 0, sizeof(pks));
+
+  pks.pub_e = m_rsa_e;
+  pks.pub_n = m_rsa_n;
+
+  // sending public keys
+  send(*clientConn, &pks, sizeof(pks), 0);
+
+  // receiving public keys
+  recv(*clientConn, &pks, sizeof(pks), 0);
+  t_rsa_e = pks.pub_e;
+  t_rsa_n = pks.pub_n;
 
   printf("[+] Receiving encrypted AES key\n");
   long long encrypted_aes[16];

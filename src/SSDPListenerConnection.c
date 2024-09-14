@@ -4,9 +4,6 @@
 #include "../src/headerConfig.c"
 #include "KeyStorageGlobal.h"
 
-struct publicKeyStore *rsa_p_list;
-int clients = -1;
-
 int isPresent(char **arr, char *key, int size) {
   for (int i = 0; i < size; i++) {
     if (strcmp(arr[i], key) == 0) {
@@ -176,26 +173,6 @@ void *SSDPListen(long duration) {
           }
           printf("Here");
           count++;
-          clients++;
-          // taking out the public keys from the SSDP message
-          long long t_pub_e;
-          long long t_pub_n;
-          int result = sscanf(
-              msgBuffer,
-              "--------------------------M_SEARCH--------------------------\n"
-              "M-SEARCH * HTTP/1.1\nuuid:%*s\npub_e:%lld\npub_n:%lld\n"
-              "Man: ssdp:discover\nST: seamless:devices_all\nMX: 5",
-              &t_pub_e, &t_pub_n);
-
-          printf("Their keys are: %lld %lld\n", t_pub_e, t_pub_n);
-
-          struct publicKeyStore pubKey;
-          pubKey.pub_e = t_pub_e;
-          pubKey.pub_n = t_pub_n;
-
-          strncpy(pubKey.ip, ip, 20);
-
-          rsa_p_list[count] = pubKey;
 
           strncpy(IpList[count], ip, 20);
           if (count == size - 1) {

@@ -82,6 +82,7 @@ long long generatePrime(int bitLength) {
 // Function to generate RSA keys
 long long generateRSAKeys(long long bitLength, long long *e, long long *d,
                           long long *n) {
+  srand(time(NULL) + rand());
   long long p = generatePrime(bitLength / 2);
   long long q = generatePrime(bitLength / 2);
   *n = p * q;
