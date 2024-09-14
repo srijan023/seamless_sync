@@ -135,28 +135,8 @@ int *getServerSocket(char *ip) {
   }
   printf("\n");
 
-  long long e;
-  long long n;
-
-  int found_public_key = 0;
-
-  // finding the public key of the client
-  for (int i = 0; i <= clients; i++) {
-    struct publicKeyStore pks = rsa_p_list[i];
-    if (strncmp(pks.ip, ip, 20) == 0) {
-      found_public_key = 1;
-      e = pks.pub_e;
-      n = pks.pub_n;
-    }
-  }
-
-  if (!found_public_key) {
-    perror("[-] Public key of client not found\n");
-    exit(1);
-  }
-
   for (int i = 0; i < 16; i++) {
-    encrypted_aes[i] = rsaEncrypt(m_aes_keys_original[i], e, n);
+    encrypted_aes[i] = rsaEncrypt(m_aes_keys_original[i], t_rsa_e, t_rsa_n);
   }
 
   printf("[+] Sending encrypted AES key");
