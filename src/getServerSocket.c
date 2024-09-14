@@ -46,6 +46,10 @@ uint8_t m_aes_keys_original[16];
 
 long long m_rsa_d;
 long long m_rsa_n;
+long long m_rsa_e;
+
+long long t_rsa_e;
+long long t_rsa_n;
 
 struct publicKeyStore *rsa_p_list;
 int clients;
@@ -145,8 +149,6 @@ int *getServerSocket(char *ip) {
       n = pks.pub_n;
     }
   }
-
-  free(rsa_p_list);
 
   if (!found_public_key) {
     perror("[-] Public key of client not found\n");

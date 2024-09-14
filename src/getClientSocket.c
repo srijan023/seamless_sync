@@ -40,13 +40,13 @@ uint8_t m_aes_keys_original[16];
 
 long long m_rsa_d;
 long long m_rsa_n;
+long long m_rsa_e;
 
-struct publicKeyStore *rsa_p_list;
-int clients;
+long long t_rsa_e;
+long long t_rsa_n;
 
 int *getClientSocket(char *ip) {
 
-  free(rsa_p_list);
   // encrypting my key
   long long encrypted_aes[16];
 

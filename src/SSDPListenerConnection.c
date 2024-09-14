@@ -91,10 +91,6 @@ void *SSDPListen(long duration) {
   // allocating the outer index array
   char **IpList = (char **)malloc(size * sizeof(char *));
 
-  // allocating space for key storage
-  rsa_p_list =
-      (struct publicKeyStore *)malloc(20 * sizeof(struct publicKeyStore));
-
   if (IpList == NULL) {
     handleSSDPError("Can't create a dynamic array", msg);
 #ifdef _WIN32
